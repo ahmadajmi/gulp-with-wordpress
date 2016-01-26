@@ -27,7 +27,7 @@ I assume you have a working knowledge of WordPress and have a working WordPress 
 
 Gulp is a a JavaScript build system that will hep us automate a time-consuming tasks like CSS compressing, Sass compile, live reloading and much more.
 
-We need to install [Gulp](http://gulpjs.com/) in our system:
+We need to install [Gulp](http://gulpjs.com/) globally in our system:
 
 ```
 npm install --global gulp
@@ -76,9 +76,7 @@ Our `gulpfile.js` starter file will be like this:
 ```js
 var gulp = require('gulp');
 
-gulp.task('default', function() {
-  // place code for your default task here
-});
+gulp.task('default');
 ```
 
 To make sure that Gulp is running and everything is done perfectly, we can run the default Gulp task in the command line inside the theme directory:
@@ -95,14 +93,72 @@ The output should be:
 [16:33:13] Finished 'default' after 58 μs
 ```
 
-## Structuring a WordPress Project with Gulp
+At this point, our theme is now ready for new tasks, let's add some new tasks that are required for everyday working.
+
 ## Speeding up development with Gulp tasks
 
 **Sass**
 
-prefixes
+For working with Sass, we will need to install some packages to compile.
 
-**javaScript**
+```
+npm install gulp-sass gulp-autoprefixer --save-dev
+```
+
+The above command will install `gulp-sass` and `gulp-autoprefixer` in the `devDependencies` object inside our `package.json` file. 
+
+The next step is to create a simple Sass folder structure inside our theme, we will create a sass directory and add a simple style.scss file inside.
+
+```
+├── sass
+│   └── style.scss
+├── screenshot.png
+├── style.css
+```
+
+What we need to do, is to write a task that will compile, autoprefix Sass and then build a `style.css` file.
+
+To do this, we will create a Gulp `sass` task to compile and autoprefix Sass as:
+
+```js
+var gulp = require('gulp');
+var sass = require('gulp-sass');
+var autoprefixer = require('gulp-autoprefixer');
+
+// Sass
+gulp.task('sass', function () {
+  return gulp.src('./sass/*.scss')
+  .pipe(sass())
+  .pipe(autoprefixer())
+  .pipe(gulp.dest('./'))
+});
+
+gulp.task('default', ['sass']);
+```
+
+Now we can run `gulp sass` and this will compile our `style.scss` file and build a new `style.css` file which will be used by WordPress. Another way to run the `sass` task, is to pass the task name as a second parameter to the `default`, so this will let us run `gulp` and to run the sass task or any other tasks inside an array of tasks to be executed and completed, as we will setup the watch task next.
+
+The `style.scss` is the main and a starting point file, you are free to create your CSS architecture and import other components, modules and functions inside it based on your preference.
+
+**Watch files**
+
+Instead of doing `gulp sass` every time we make a change to compile Sass, we need to automate this by adding a task to watch our code changes and then to the compile.
+
+So the watch task simply it to watch files and do something when a file changes, in our case when a Sass file changes, we run the `sass` task.
+
+```js
+gulp.task('watch', function(){
+  gulp.watch('./sass/**/*.scss', ['sass']);
+})
+
+gulp.task('default', ['sass', 'watch']);
+```
+
+Now we can run `gulp` to run the default gulp task and also run the sass and watch tasks.
+
+[A Simple Gulp’y Workflow For Sass](http://www.sitepoint.com/simple-gulpy-workflow-sass/)
+
+**JavaScript**
 
 **Images**
 
@@ -117,7 +173,6 @@ We can setup to watch an image directory, and every time we drag a new image the
 
 ```
 npm install --save-dev gulp-plumber gulp-util
-npm install --save-dev gulp-util
 ```
 
 ```js
@@ -143,6 +198,7 @@ gulp.task('sass', function () {
 npm install browser-sync gulp --save-dev
 ```
 
+## Structuring a WordPress Project with Gulp
 ## Switching between Development & Production environments
 ## Resources
 ## Conclusion
