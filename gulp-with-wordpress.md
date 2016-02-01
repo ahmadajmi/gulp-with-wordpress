@@ -12,6 +12,7 @@ We will automate the development WorkFlow process as much as we can
 
 * Remove repetitive and boring tasks, replace them with tools, so tools will take care of all the process.
 * Save a lot of time for doing actual development
+* Optimize website for performance by minifying and concatenating all asst files.
 
 It will help us with things like CSS prefixes, minifying, image optimizations, browser reload.
 
@@ -69,11 +70,19 @@ Next, we’ll install Gulp within the theme:
 npm install gulp --save-dev
 ```
 
+Some Gulp tasks like [gulp-autoprefixer](https://www.npmjs.com/package/gulp-autoprefixer) require ES6-style Promises support, so we can install the [es6-promise](https://github.com/jakearchibald/es6-promise) polyfill, require it at the top of the `gulpfile.js` file as we will do next.
+
+```
+npm install es6-promise --save-dev
+```
+
 We have to create an empty `gulpfile.js` configuration file within the theme directory. It’ll be used to define our Gulp tasks such as JavaScript and Sass.
 
 Our `gulpfile.js` starter file will be like this:
 
 ```js
+require('es6-promise').polyfill();
+
 var gulp = require('gulp');
 
 gulp.task('default');
@@ -121,13 +130,15 @@ What we need to do, is to write a task that will compile, autoprefix Sass and th
 To do this, we will create a Gulp `sass` task to compile and autoprefix Sass as:
 
 ```js
+require('es6-promise').polyfill();
+
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
 
 // Sass
 gulp.task('sass', function () {
-  return gulp.src('./sass/*.scss')
+  return gulp.src('sass/*.scss')
   .pipe(sass())
   .pipe(autoprefixer())
   .pipe(gulp.dest('./'))
@@ -160,9 +171,142 @@ Now we can run `gulp` to run the default gulp task and also run the sass and wat
 
 **JavaScript**
 
+For working with JavaScript, there are different tasks that are required to speed up and improve JavaScript development.
+
+```
+// To lint files
+npm install jshint gulp-jshint --save-dev
+
+// To minify files
+npm install gulp-uglify --save-dev
+
+// To concatenate files
+npm install gulp-concat --save-dev
+
+// To rename the final file
+npm install gulp-rename --save-dev
+```
+
+```js
+var jshint = require('gulp-jshint');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
+```
+
+```js
+// JavaScript
+
+gulp.task('js', function(){
+  return gulp.src(['./js/*.js'])
+    .pipe(jshint())
+    .pipe(concat('app.js'))
+    .pipe(rename({suffix: '.min'}))
+    .pipe(uglify())
+    .pipe(gulp.dest('./js'))
+});
+```
+
+After we run `gulp js` as a task command from the command line, a new files called `app.min.js` and this file will be the final and compress file that we will add it to our theme.
+
+The task above will concatenate every single file inside the `/js` directory, and in the `_underscore` themes, theses files are `customizer.js`, `navigation.js` and `skip-link-focus-fix.js`. If we just need to include specific files, we can add them inside `gulp.src` array as:
+
+```js
+// JavaScript
+
+gulp.task('js', function(){
+  return gulp.src([
+    'js/navigation.js', 
+    'js/skip-link-focus-fix.js'])
+  //
+  //
+});
+```
+
+This will just do all the operations on those two files, if we need to add another new file we can only append it to the array.
+
+We can also update the watch task to watch changes inside any JavaScipt file and then run the `js` task, and also update the default task to include the `js` task as:
+
+```js
+
+gulp.task('watch', function(){
+  gulp.watch('./sass/**/*.scss', ['sass']);
+  gulp.watch('./js/*.js', ['js']);
+});
+
+gulp.task('default', ['sass', 'js', 'watch']);
+```
+
+Inside `functions.php` file, we can enqueue this file as:
+
+```php
+wp_enqueue_script( 'app-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20120206', true );
+```
+
+We can remove other files enqueue as we already concatenated them using `gulp concat` task above. Including one file will speed up our website and improve performance as we should always do instead of loading too many files whether they are CSS or JavaScipt files.
+
+We can end up with the `gulp_wordpress_scripts` function that is looks like this:
+
+```php
+/**
+ * Enqueue scripts and styles.
+ */
+function gulp_wordpress_scripts() {
+  wp_enqueue_style( 'gulp-wordpress-style', get_stylesheet_uri() );
+
+  wp_enqueue_script( 'gulp-wordpress-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20120206', true );
+
+  if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
+    wp_enqueue_script( 'comment-reply' );
+  }
+}
+add_action( 'wp_enqueue_scripts', 'gulp_wordpress_scripts' );
+```
+
 **Images**
 
+Now with images, most of images not are so much big, especially if we are using some images from websites like unsplash which sometimes reach more than 5 MB in size, how can we automate image compression in Gulp, that's what we will discover next.
+
+To minify images we need to install the [gulp-imagemin](https://www.npmjs.com/package/gulp-imagemin) to minify PNG, JPEG, GIF and SVG images.
+
+```
+npm install gulp-imagemin --save-dev
+```
+
+We can create two folders:
+
+* The first for the original images
+* The second for the optimized images
+
+And the task that we will write will see images in the first folder, then optimize them and move them to the optimized folder.
+
+```js
+var imagemin = require('gulp-imagemin');
+var pngquant = require('imagemin-pngquant');
+
+// Images
+
+gulp.task('images', function() {
+  return gulp.src('images/*')
+    .pipe(imagemin({
+      optimizationLevel: 7,
+      progressive: true,
+      use: [pngquant()]
+    }))
+    .pipe(gulp.dest('dist/images'));
+});
+```
+
 We can setup to watch an image directory, and every time we drag a new image there it will compress the new image automatically for us.
+
+```js
+gulp.task('watch', function(){
+  gulp.watch('images/*', ['images']);
+});
+```
+
+[Image Optimising with Gulp](http://diezjietal.be/blog/2015/02/18/image-optimizers.html)
+
 **Browser refresh**
 
 **Error Handler**
