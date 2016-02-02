@@ -265,7 +265,7 @@ add_action( 'wp_enqueue_scripts', 'gulp_wordpress_scripts' );
 
 **Images**
 
-Now with images, most of images not are so much big, especially if we are using some images from websites like unsplash which sometimes reach more than 5 MB in size, how can we automate image compression in Gulp, that's what we will discover next.
+Now with images, most of images not are so much big, especially if we are using some images from websites like [unsplash](https://unsplash.com/) which sometimes reach more than 5 MB in size, how can we automate image compression in Gulp, that's what we will discover next.
 
 To minify images we need to install the [gulp-imagemin](https://www.npmjs.com/package/gulp-imagemin) to minify PNG, JPEG, GIF and SVG images.
 
@@ -319,10 +319,28 @@ Then we will require Browsersync within our `gulpfile.js` file:
 
 ```js
 var browserSync = require('browser-sync').create();
+var reload      = browserSync.reload;
 ```
 
 The next step is to add the Browsersync to the watch task as:
 
+```js
+gulp.task('watch', function() {
+  browserSync.init({
+    files: ['{inc, templates-parts}/**/*.php', '*.php'],
+    proxy: 'http://localhost:8888/wordpress/',
+  });
+  gulp.watch('sass/**/*.scss', ['sass', reload]);
+  gulp.watch('js/*.js', ['js', reload]);
+  gulp.watch('images/*', ['images', reload]);
+});
+```
+
+We can now run `gulp` and it will open a new tab in the browser to the localhost, and this local host could be used in any device connected to the same network, so in every change browserSync will reload all the tabs.
+
+We also have updated the `sass`, `js` and `images` watch tasks to reload the page if any changes happened to the files or we changed the content of the images folder.
+
+Notice that we will need to update the [proxy](https://www.browsersync.io/docs/options/#option-proxy) option to our local development URL. For example, if our local development URL is `http://localhost:8888/wordpress/`, we would update the proxy value above with it.
 
 We need to specify the host name
 
@@ -333,7 +351,7 @@ We need to specify the host name
 [gulp-util](https://github.com/gulpjs/gulp-util)
 
 ```
-npm install --save-dev gulp-plumber gulp-util
+npm install gulp-plumber gulp-util --save-dev
 ```
 
 ```js
@@ -344,7 +362,7 @@ var onError = function( err ) {
   console.log('An error occurred:', gutil.colors.magenta(err.message));
   gutil.beep();
   this.emit('end');
-}
+};
 
 gulp.task('sass', function () {
   return gulp.src('./assets/sass/*.scss')
@@ -353,15 +371,7 @@ gulp.task('sass', function () {
 });
 ```
 
-**Browsersync**
-
-```
-npm install browser-sync gulp --save-dev
-```
-
-## Structuring a WordPress Project with Gulp
-
-## Switching between Development & Production environments
+## Switching between Development & Production Environments
 
 ## Resources
 
