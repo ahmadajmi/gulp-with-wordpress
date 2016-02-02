@@ -305,9 +305,26 @@ gulp.task('watch', function(){
 });
 ```
 
-[Image Optimising with Gulp](http://diezjietal.be/blog/2015/02/18/image-optimizers.html)
+[Image Optimizing with Gulp](http://diezjietal.be/blog/2015/02/18/image-optimizers.html)
 
-**Browser refresh**
+**Browser Refresh with BrowserSync**
+
+First, we'll need to install Browsersync as development dependency.
+
+```
+npm install browser-sync --save-dev
+```
+
+Then we will require Browsersync within our `gulpfile.js` file:
+
+```js
+var browserSync = require('browser-sync').create();
+```
+
+The next step is to add the Browsersync to the watch task as:
+
+
+We need to specify the host name
 
 **Error Handler**
 
@@ -343,8 +360,11 @@ npm install browser-sync gulp --save-dev
 ```
 
 ## Structuring a WordPress Project with Gulp
+
 ## Switching between Development & Production environments
+
 ## Resources
+
 ## Conclusion
 
 As we have seen, working with automation tools has become very important for the development process, things like Sass compile, browser reload after each action, production and environment mode, image optimization, all of theses tools should be automated from the start with one command, so we can focus on the the core development ideas.
