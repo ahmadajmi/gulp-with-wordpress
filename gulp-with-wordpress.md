@@ -138,7 +138,7 @@ var autoprefixer = require('gulp-autoprefixer');
 
 // Sass
 gulp.task('sass', function () {
-  return gulp.src('sass/*.scss')
+  return gulp.src('./sass/*.scss')
   .pipe(sass())
   .pipe(autoprefixer())
   .pipe(gulp.dest('./'))
@@ -287,13 +287,13 @@ var pngquant = require('imagemin-pngquant');
 // Images
 
 gulp.task('images', function() {
-  return gulp.src('images/*')
+  return gulp.src('./images/*')
     .pipe(imagemin({
       optimizationLevel: 7,
       progressive: true,
       use: [pngquant()]
     }))
-    .pipe(gulp.dest('dist/images'));
+    .pipe(gulp.dest('./dist/images'));
 });
 ```
 
@@ -301,7 +301,7 @@ We can setup to watch an image directory, and every time we drag a new image the
 
 ```js
 gulp.task('watch', function(){
-  gulp.watch('images/*', ['images']);
+  gulp.watch('./images/*', ['images']);
 });
 ```
 
@@ -327,12 +327,12 @@ The next step is to add the Browsersync to the watch task as:
 ```js
 gulp.task('watch', function() {
   browserSync.init({
-    files: ['{inc, templates-parts}/**/*.php', '*.php'],
+    files: ['./**/*.php'],
     proxy: 'http://localhost:8888/wordpress/',
   });
-  gulp.watch('sass/**/*.scss', ['sass', reload]);
-  gulp.watch('js/*.js', ['js', reload]);
-  gulp.watch('images/*', ['images', reload]);
+  gulp.watch('./sass/**/*.scss', ['sass', reload]);
+  gulp.watch('./js/*.js', ['js', reload]);
+  gulp.watch('./images/*', ['images', reload]);
 });
 ```
 
@@ -348,10 +348,18 @@ We need to specify the host name
 
 [gulp-plumber](https://www.npmjs.com/package/gulp-plumber)
 
-[gulp-util](https://github.com/gulpjs/gulp-util)
+Prevent pipe breaking caused by errors from gulp plugins.
+
+We need to install `gulp-plumber` as a development dependency:
 
 ```
-npm install gulp-plumber gulp-util --save-dev
+npm install gulp-plumber --save-dev
+```
+
+Next, we will add another plugin for adding a simple sound and add colors to the error message, we will need to install [gulp-util](https://github.com/gulpjs/gulp-util) package
+
+```
+npm install gulp-util --save-dev
 ```
 
 ```js
@@ -365,9 +373,10 @@ var onError = function( err ) {
 };
 
 gulp.task('sass', function () {
-  return gulp.src('./assets/sass/*.scss')
+  return gulp.src('./sass/*.scss')
   .pipe(plumber({ errorHandler: onError }))
-  .pipe(gulp.dest('./assets/css'));
+  //
+  //
 });
 ```
 
