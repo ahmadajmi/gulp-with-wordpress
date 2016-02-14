@@ -6,13 +6,13 @@ I think the most common thing as web developers do is to reload the browser afte
 
 Today we will introduce Gulp, how to use it, and how to integrate it with WordPress to automate and enhance our development workflow process.
 
-## Why I need to automate my WorkFlow 
+## Why I Need to Automate My Workflow
 
 * Remove repetitive and boring tasks, replace them with tools, so tools will take care of all the process.
 * Save a lot of time for doing actual development.
 * Optimize website for performance by minifying and concatenating and optimizing all our assets.
 
-## Assumptions of this article
+## Assumptions of This Article
 
 - WordPress knowledge.
 - WordPress installed in your machine.
@@ -102,11 +102,15 @@ The output should be similar to:
 
 At this point, our theme is now ready for new tasks, let's add some new tasks that are required for everyday working.
 
-## Speeding up development with Gulp tasks
+## Speeding up Development with Gulp Tasks
+
+Now it's time to go through some common tasks that we can use in development everyday.
 
 ### Sass
 
-For working with Sass, we will need to install some packages to compile.
+For working with Sass, we will need to install some packages to compile Sass to regular CSS code, and to make writing Sass easier we will autoprefix our code.
+
+The next step is to install:
 
 ```
 npm install gulp-sass gulp-autoprefixer --save-dev
@@ -114,18 +118,20 @@ npm install gulp-sass gulp-autoprefixer --save-dev
 
 The above command will install `gulp-sass` and `gulp-autoprefixer` in the `devDependencies` object inside our `package.json` file. 
 
-The next step is to create a simple Sass folder structure inside our theme, we will create a sass directory and add a simple style.scss file inside.
+The next step is to create a sass directory with a basic structure inside out theme contains a `style.scss` file inside.
 
 ```
 ├── sass
 │   └── style.scss
-├── screenshot.png
-├── style.css
 ```
 
-What we need to do, is to write a task that will compile, autoprefix Sass and then build a `style.css` file.
+What we need to do, is to write a task that will do two things:
 
-To do this, we will create a Gulp `sass` task to compile and autoprefix Sass as:
+- Compile Sass.
+- Autoprefix Sass.
+- Build a `style.css` file, which will be used by WordPress.
+
+To do this, we will create a Gulp `sass` task as:
 
 ```js
 require('es6-promise').polyfill();
@@ -147,13 +153,16 @@ gulp.task('default', ['sass']);
 
 Now we can run `gulp sass` and this will compile our `style.scss` file and build a new `style.css` file which will be used by WordPress. Another way to run the `sass` task, is to pass the task name as a second parameter to the `default`, so this will let us run `gulp` and to run the sass task or any other tasks inside an array of tasks to be executed and completed, as we will setup the watch task next.
 
-The `style.scss` is the main and a starting point file, you are free to create your CSS architecture and import other components, modules and functions inside it based on your preference.
+The `style.scss` is the main and a starting point file, you are free to create your Sass architecture and import other components, modules and functions inside it based on your preference, we will no got through this as it's out of the scope, but if you want to read more about Sass and how to structure it, you can read:
 
-### Watch files
+[A Simple Gulp’y Workflow For Sass](http://www.sitepoint.com/simple-gulpy-workflow-sass/)
+[Architecture for a Sass Project](Architecture for a Sass Project)
+
+### Watching Files
 
 Instead of doing `gulp sass` every time we make a change to compile Sass, we need to automate this by adding a task to watch our code changes and then to the compile.
 
-So the watch task simply it to watch files and do something when a file changes, in our case when a Sass file changes, we run the `sass` task.
+So the watch task is used to watch the changed that are made in our files, and once that file is changed we need to to some action, in our case when a Sass file changes, we run the `sass` task.
 
 ```js
 gulp.task('watch', function(){
