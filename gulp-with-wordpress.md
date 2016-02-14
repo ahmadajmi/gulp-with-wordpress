@@ -172,9 +172,7 @@ gulp.task('watch', function(){
 gulp.task('default', ['sass', 'watch']);
 ```
 
-Now we can run `gulp` to run the default gulp task and also run the sass and watch tasks.
-
-[A Simple Gulp’y Workflow For Sass](http://www.sitepoint.com/simple-gulpy-workflow-sass/)
+Now we can run `gulp` to run the default gulp task and also run the `sass`, and `watch` tasks.
 
 ### JavaScript
 
@@ -194,14 +192,15 @@ npm install gulp-concat --save-dev
 npm install gulp-rename --save-dev
 ```
 
+Next, we will require all the newly installed packages, then we can create a `js` task as:
+
 ```js
+
 var jshint = require('gulp-jshint');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
-```
 
-```js
 // JavaScript
 
 gulp.task('js', function(){
@@ -214,9 +213,11 @@ gulp.task('js', function(){
 });
 ```
 
-After we run `gulp js` as a task command from the command line, a new files called `app.min.js` and this file will be the final and compress file that we will add it to our theme.
+After we run `gulp js` as a task command from the command line, a new file called `app.min.js`, and this file will be the final and the compressed file that we will add it to our theme.
 
-The task above will concatenate every single file inside the `/js` directory, and in the `_underscore` themes, theses files are `customizer.js`, `navigation.js` and `skip-link-focus-fix.js`. If we just need to include specific files, we can add them inside `gulp.src` array as:
+The task above will concatenate every single file inside the `/js` directory, and in the `_underscore` themes, theses files are `customizer.js`, `navigation.js`, and `skip-link-focus-fix.js`. 
+
+If we just need to include a specific files, we can add them inside `gulp.src` array as:
 
 ```js
 // JavaScript
@@ -230,9 +231,9 @@ gulp.task('js', function(){
 });
 ```
 
-This will just do all the operations on those two files, if we need to add another new file we can only append it to the array.
+This will just do all the operations on those two files, if we need to add another new file we need to only append it to the array.
 
-We can also update the watch task to watch changes inside any JavaScipt file and then run the `js` task, and also update the default task to include the `js` task as:
+We can also update the `watch` task to watch changes inside any JavaScipt file and then run the `js` task.
 
 ```js
 
@@ -244,7 +245,7 @@ gulp.task('watch', function(){
 gulp.task('default', ['sass', 'js', 'watch']);
 ```
 
-Inside `functions.php` file, we can enqueue this file as:
+Inside `functions.php` file, we can enqueue the final JavaSript file (`app.min.js`) as:
 
 ```php
 wp_enqueue_script( 'app-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20120206', true );
@@ -252,7 +253,7 @@ wp_enqueue_script( 'app-javascript', get_template_directory_uri() . '/js/app.min
 
 We can remove other files enqueue as we already concatenated them using `gulp concat` task above. Including one file will speed up our website and improve performance as we should always do instead of loading too many files whether they are CSS or JavaScipt files.
 
-We can end up with the `gulp_wordpress_scripts` function that is looks like this:
+We can end up with the `gulp_wordpress_scripts` function inside `functions.php` that is looks like this:
 
 ```php
 /**
@@ -272,7 +273,7 @@ add_action( 'wp_enqueue_scripts', 'gulp_wordpress_scripts' );
 
 ### Images
 
-Now with images, most of images not are so much big, especially if we are using some images from websites like [unsplash](https://unsplash.com/) which sometimes reach more than 5 MB in size, how can we automate image compression in Gulp, that's what we will discover next.
+Now with images, most of images are so much big, especially if we are using some images from websites like [unsplash](https://unsplash.com/) which sometimes reach more than 5 MB in size, how can we automate image compression in Gulp, that's what we will do next.
 
 To minify images we need to install the [gulp-imagemin](https://www.npmjs.com/package/gulp-imagemin) to minify PNG, JPEG, GIF and SVG images.
 
@@ -282,8 +283,8 @@ npm install gulp-imagemin --save-dev
 
 We can create two folders:
 
-* The first for the original images
-* The second for the optimized images
+- The first is the source folder (`./images`) for the original images
+- The second is the destination folder (`./dest/images`) for the optimized images
 
 And the task that we will write will see images in the first folder, then optimize them and move them to the optimized folder.
 
@@ -295,19 +296,22 @@ var pngquant = require('imagemin-pngquant');
 
 gulp.task('images', function() {
   return gulp.src('./images/*')
+    .pipe(plumber({ errorHandler: onError }))
     .pipe(imagemin({
       optimizationLevel: 7,
       progressive: true,
       use: [pngquant()]
     }))
-    .pipe(gulp.dest('./dist/images'));
+    .pipe(gulp.dest('./dest/images'));
 });
 ```
 
-We can setup to watch an image directory, and every time we drag a new image there it will compress the new image automatically for us.
+The next is to watch the `./images`, and every time we drag a new image there it will compress the new image automatically for us.
 
 ```js
-gulp.task('watch', function(){
+gulp.task('watch', function() {
+  //
+  //
   gulp.watch('./images/*', ['images']);
 });
 ```
