@@ -1,4 +1,4 @@
-# Automate WordPress Theme Development Workflow with Gulp
+# WordPress Theme Development Automation with Gulp
 
 I think the most common thing as web developers do is to reload the browser after each change in our code, what if we are testing in more than a browser, and also on mobile, we will have to hit the refresh button on every single screen, what if something is responsible for doing this for us. Another thing is image compression, what if we setup a tool to auto compressing images for us once we put it in the images folder, think about automation in all the stuff we do everyday by hand, Sass compile, file concatenation.
 
@@ -19,7 +19,7 @@ Today we will introduce [Gulp](http://gulpjs.com/), how to use it, and how to in
 
 ## Introduction to Gulp
 
-Gulp is a JavaScript task runner that will help us automate a time-consuming tasks like CSS compressing, Sass compile, image optimization, and other tasks.
+Gulp is a JavaScript task runner that will help us automate a time consuming tasks like CSS compressing, Sass compile, image optimization, and other tasks.
 
 We need to install [Gulp](http://gulpjs.com/) globally in our system, and later we will see how to install it as a package inside out theme. Assuming Node.js is installed in our machine, we can install Gulp using npm like: 
 
@@ -161,6 +161,23 @@ gulp.task('default', ['sass']);
 Now we can run `gulp sass` task directly, this will compile our `style.scss` file and build a new `style.css` in the theme root. 
 
 Another way to run the `sass` task, is to pass the task name as a second parameter to the `default` task, and by running `gulp`, the `sass` task will be executed.
+
+**RTL Style**
+
+```js
+var rename       = require('gulp-rename');
+var rtlcss       = require('gulp-rtlcss');
+
+gulp.task('sass', function() {
+  return gulp.src('./sass/*.scss')
+  .pipe(sass())
+  .pipe(autoprefixer())
+  .pipe(gulp.dest('./'))              // Output LTR stylesheets.
+  .pipe(rtlcss())                     // Convert to RTL.
+  .pipe(rename({ basename: 'rtl' }))  // Append "-rtl" to the filename.
+  .pipe(gulp.dest('./'));             // Output RTL stylesheets.
+});
+```
 
 To read more about Sass structure it, and how to use it with Gulp you can read:
 
@@ -393,7 +410,7 @@ var onError = function( err ) {
   this.emit('end');
 };
 
-gulp.task('sass', function () {
+gulp.task('sass', function() {
   return gulp.src('./sass/*.scss')
   .pipe(plumber({ errorHandler: onError }))
   //
