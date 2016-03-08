@@ -2,11 +2,11 @@
 
 I think the most common thing as web developers do is to reload the browser after each change in our code, what if we are testing in more than a browser, and also on mobile, we will have to hit the refresh button on every single screen, what if something is responsible for doing this for us. Another thing is image compression, what if we setup a tool to auto compressing images for us once we put it in the images folder, think about automation in all the stuff we do everyday by hand, Sass compile, file concatenation.
 
-Today we will introduce [Gulp](http://gulpjs.com/), how to use it, and how to integrate it with [WordPress](https://wordpress.org/) to automate and enhance our theme development process by putting together an automated workflow.
+In this tutorial, I’ll introduce [Gulp](http://gulpjs.com/), and how to integrate it with [WordPress](https://wordpress.org/) to automate and enhance your theme development process by putting together an automated workflow.
 
 ## Why I Need to Automate Development Workflow
 
-* Remove repetitive and boring tasks, replace them with tools, which will take care of all the process.
+* Remove repetitive and boring tasks, replace them with tools.
 * Save a lot of time for doing the core development.
 * Refresh the browser across multiple devices for testing once a file is changed.
 * Optimize website for performance by minifying and optimizing all our assets.
@@ -21,7 +21,7 @@ Today we will introduce [Gulp](http://gulpjs.com/), how to use it, and how to in
 
 Gulp is a JavaScript task runner that will help us automate a time consuming tasks like CSS compressing, Sass compile, image optimization, and other tasks.
 
-We need to install [Gulp](http://gulpjs.com/) globally in our system, and later we will see how to install it as a package inside out theme. Assuming Node.js is installed in our machine, we can install Gulp using npm like: 
+We need to install [Gulp](http://gulpjs.com/) globally in our system, and later we will see how to install it as a package inside our theme. Assuming Node.js is installed in our machine, we can install Gulp using npm like: 
 
 ```
 npm install --global gulp
@@ -29,7 +29,7 @@ npm install --global gulp
 
 ## Theme Setup
 
-We will use the [underscore](http://underscores.me/) as our working theme. We can navigate to [underscores.me](http://underscores.me/), generate a new theme and give it a name like `gulp-wordpress`, download it to the WordPress themes directory, then activate it from the dashboard.
+We will use the [underscore](http://underscores.me/) as our base theme. We can navigate to [underscores.me](http://underscores.me/), generate a new theme and give it a name like `gulp-wordpress`, download it to the WordPress themes directory, then activate it from the dashboard.
 
 From the command line, we can navigate to the `gulp-wordpress` theme directory where we have added the theme, for example in my case:
 
@@ -37,7 +37,7 @@ From the command line, we can navigate to the `gulp-wordpress` theme directory w
 cd ~/www/wordpress/wp-content/themes/gulp-wordpress
 ```
 
-To prepare the theme to work with Gulp, we need to install it inside our theme, but first we need to run the command `npm init` and follow a few simple steps to create a `package.json` file which will include information about the theme and what are the packages we need in our project.
+Next we need to run the `npm init` command and follow a few simple steps to create a `package.json` file which will include some information about the theme and the used packages in our project.
 
 After finishing up the steps, we will have a starting file that looks similar to this:
 
@@ -51,13 +51,13 @@ After finishing up the steps, we will have a starting file that looks similar to
 }
 ```
 
-Next, we’ll install Gulp at the theme project as `devDependencies`:
+Next, we’ll install Gulp as `devDependencies`:
 
 ```
 npm install gulp --save-dev
 ```
 
-A `node_modules` directory is now created in the theme directory contains all the Gulp source files, and `package.json` file has been updated to include Gulp as a dev dependency.
+A `node_modules` directory is now created inside the theme contains all the Gulp source files, and `package.json` file has been updated to include Gulp as a development dependency.
 
 Some Gulp tasks like [gulp-autoprefixer](https://www.npmjs.com/package/gulp-autoprefixer) require ES6-style Promises support, so we can install the [es6-promise](https://github.com/jakearchibald/es6-promise) polyfill, and then require it at the top of the `gulpfile.js` as we will do next.
 
@@ -65,7 +65,7 @@ Some Gulp tasks like [gulp-autoprefixer](https://www.npmjs.com/package/gulp-auto
 npm install es6-promise --save-dev
 ```
 
-Let's create an empty `gulpfile.js` configuration file within the theme root, which will be used to define our Gulp tasks such as JavaScript and Sass.
+Let's create an empty `gulpfile.js` configuration file, which will be used to define our Gulp tasks such as JavaScript and Sass.
 
 Our `gulpfile.js` starter file will be like this:
 
@@ -91,13 +91,13 @@ To make sure that Gulp is running and everything is done perfectly, we can run t
 [16:33:13] Finished 'default' after 58 μs
 ```
 
-At this point, our theme is now ready for new tasks, and it's time to go through some common tasks that we can use in development everyday.
+At this point, our theme is ready for new tasks, and it's time to go through some common tasks that we can use in development everyday.
 
 ## Speeding up Development with Gulp Tasks
 
 ### Sass
 
-We will need to install some packages to compile [Sass](http://sass-lang.com/) to regular CSS code, and to make writing Sass easier we will autoprefix our code.
+We will need to install some packages to compile and autoprefix [Sass](http://sass-lang.com/).
 
 ```
 npm install gulp-sass gulp-autoprefixer --save-dev
@@ -105,14 +105,14 @@ npm install gulp-sass gulp-autoprefixer --save-dev
 
 The above command will install [`gulp-sass`](https://www.npmjs.com/package/gulp-sass) and [`gulp-autoprefixer`](https://www.npmjs.com/package/gulp-autoprefixer) as `devDependencies` inside `package.json` file. 
 
-The next step is to create a sass directory with a basic structure inside our theme, with a main `style.scss` file.
+The next step is to create a Sass directory with a basic structure.
 
 ```
 ├── sass
 │   └── style.scss
 ```
 
-The `style.scss` is the main and a starting point file, you are free to create your Sass architecture and import other components, modules, functions inside it based on your preference. The first few lines will be the stylesheet header required by WordPress to provide details about the the theme, then we can write or import other Sass files.
+The `style.scss` is the main and a starting point file, you are free to create your Sass architecture and import other components, modules, functions inside it based on your preference. The first few lines will be the stylesheet header required by WordPress, then we can write or import other Sass files.
 
 ```css
 /*
@@ -136,7 +136,7 @@ body {
 Next, we will write a task that will do the following things:
 
 - Compile and autoprefix Sass.
-- Build a `style.css` file, which will be used by WordPress.
+- Build a `style.css` file, which is the final CSS file used by WordPress.
 
 To do this, we will create a Gulp `sass` task as:
 
@@ -164,6 +164,14 @@ Another way to run the `sass` task, is to pass the task name as a second paramet
 
 **RTL Style**
 
+To automate the `rtl.css` file automatically, we can use [`gulp-rtlcss`](https://www.npmjs.com/package/gulp-rtlcss) plugin to auto convert LTR CSS to RTL, so we write Sass in one file then gulp will generate the `style.css` file then generate `rtl.css` file based on it. The second plugin is the [`gulp-rename`](https://www.npmjs.com/package/gulp-rename) which will rename the RTL file to `rtl.css` automatically.
+
+```
+npm install gulp-rtlcss gulp-rename --save-dev
+```
+
+We need to modify the `sass` task to use the `rtlcss` and in this step the plugin will convert all the CSS properties like floats and text direction from left to right.
+
 ```js
 var rename       = require('gulp-rename');
 var rtlcss       = require('gulp-rtlcss');
@@ -172,10 +180,11 @@ gulp.task('sass', function() {
   return gulp.src('./sass/*.scss')
   .pipe(sass())
   .pipe(autoprefixer())
-  .pipe(gulp.dest('./'))              // Output LTR stylesheets.
-  .pipe(rtlcss())                     // Convert to RTL.
-  .pipe(rename({ basename: 'rtl' }))  // Append "-rtl" to the filename.
-  .pipe(gulp.dest('./'));             // Output RTL stylesheets.
+  .pipe(gulp.dest('./'))              // Output LTR stylesheets
+
+  .pipe(rtlcss())                     // Convert to RTL
+  .pipe(rename({ basename: 'rtl' }))  // Rename to rtl.css
+  .pipe(gulp.dest('./'));             // Output RTL stylesheets
 });
 ```
 
@@ -423,7 +432,7 @@ What we have did above:
 - Add a `onError` function to log an error message, and to create a beep sound.
 - Update the `sass` task to use the `plumber` function and then pass the `onError` to it as a value to the `errorHandler` object property.
 
-## Switching between Development & Production Environments
+## Switching Between Development & Production Environments
 
 ## Resources
 
