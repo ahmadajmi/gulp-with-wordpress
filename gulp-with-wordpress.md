@@ -182,15 +182,17 @@ Now, run `gulp sass` task directly into the command line, this will compile `sty
 
 Another way to run the `sass` task, is to pass the task name as a second parameter to the `default` task as I did above, so by running `gulp`, the `sass` task will be executed.
 
-Another thing that is related to WordPress final CSS file is to include the table of content .....
+A good WordPress practice is to include CSS table of content to the final CSS file at the top of the file just after the stylesheet header. ...
 
-To automate the `rtl.css` file automatically, we can use [`gulp-rtlcss`](https://www.npmjs.com/package/gulp-rtlcss) plugin to auto convert LTR CSS to RTL, so we write Sass in one file then gulp will generate the `style.css` file then generate `rtl.css` file based on it. The second plugin is the [`gulp-rename`](https://www.npmjs.com/package/gulp-rename) which will rename the RTL file to `rtl.css` automatically.
+To automate the `rtl.css` file automatically, [`gulp-rtlcss`](https://www.npmjs.com/package/gulp-rtlcss) plugin could be used auto convert LTR CSS to RTL, so you write Sass in one file then gulp will generate the `style.css` file then generate `rtl.css` file based on it. 
+
+The second plugin is the [`gulp-rename`](https://www.npmjs.com/package/gulp-rename) which will rename the file to `rtl.css` automatically.
 
 ```
 npm install gulp-rtlcss gulp-rename --save-dev
 ```
 
-We need to modify the `sass` task to use the `rtlcss` and in this step the plugin will convert all the CSS properties like floats and text direction from left to right.
+The next step is to modify the `sass` task to use the `rtlcss` and in this step the plugin will convert all the CSS properties like floats and text direction from left to right.
 
 ```js
 var rename       = require('gulp-rename');
@@ -222,7 +224,7 @@ So the watch task is used to watch the changes that are made in our files, and o
 
 ```js
 // Watch any file with `.scss` extension inside the sass directory.
-gulp.task('watch', function(){
+gulp.task('watch', function() {
   gulp.watch('./sass/**/*.scss', ['sass']);
 })
 
@@ -280,7 +282,7 @@ If we just need to include a specific files, we can add them inside `gulp.src` a
 ```js
 // JavaScript
 
-gulp.task('js', function(){
+gulp.task('js', function() {
   return gulp.src([
     'js/navigation.js', 
     'js/skip-link-focus-fix.js'])
@@ -295,7 +297,7 @@ We can also update the `watch` task to watch changes inside any JavaScipt file a
 
 ```js
 
-gulp.task('watch', function(){
+gulp.task('watch', function() {
   gulp.watch('./sass/**/*.scss', ['sass']);
   gulp.watch('./js/*.js', ['js']);
 });
@@ -321,10 +323,6 @@ function gulp_wordpress_scripts() {
   wp_enqueue_style( 'gulp-wordpress-style', get_stylesheet_uri() );
 
   wp_enqueue_script( 'gulp-wordpress-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20120206', true );
-
-  if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-    wp_enqueue_script( 'comment-reply' );
-  }
 }
 add_action( 'wp_enqueue_scripts', 'gulp_wordpress_scripts' );
 ```
@@ -341,8 +339,8 @@ npm install gulp-imagemin --save-dev
 
 We can create two folders:
 
-- The first is the source folder (`./images`) for the original images.
-- The second is the destination folder (`./dest/images`) for the optimized images.
+1. `/images`: Source folder contains the original images.
+2. `/dest/images`: Destination folder contains the optimized images.
 
 And the task that we will write will see images in the first folder, then optimize them and move them to the optimized folder.
 
@@ -364,11 +362,10 @@ gulp.task('images', function() {
 });
 ```
 
-The next is to watch the `./images`, and every time we drag a new image there it will compress the new image automatically for us.
+The next is to watch the `/images`, and every time we drag a new image there it will compress the new image automatically for us.
 
 ```js
 gulp.task('watch', function() {
-  //
   //
   gulp.watch('./images/*', ['images']);
 });
