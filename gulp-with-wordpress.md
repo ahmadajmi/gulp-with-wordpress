@@ -1,57 +1,74 @@
 # WordPress Theme Development Automation with Gulp
 
-I think the most common thing as web developers do is to reload the browser after each change in our code, what if we are testing in more than a browser, and also on mobile, we will have to hit the refresh button on every single screen, what if something is responsible for doing this for us. Another thing is image compression, what if we setup a tool to auto compressing images for us once we put it in the images folder, think about automation in all the stuff we do everyday by hand, Sass compile, file concatenation.
+I think the most common thing as web developers do is to reload the browser after each change in our code. What if we are testing in more than one browser or mobile devices, we will have to hit the refresh button on every single screen. What if something is responsible for doing this for us. 
+
+Another thing is image compression, what if we setup a tool to auto compressing images for us once we put it in the images folder, think about automating everything we do everyday by hand, Sass compile, file concatenation.
 
 In this tutorial, I’ll introduce [Gulp](http://gulpjs.com/), and how to integrate it with [WordPress](https://wordpress.org/) to automate and enhance your theme development process by putting together an automated workflow.
 
-## Why I Need to Automate Development Workflow
+## Why I Need to Automate my Development Workflow
 
 * Remove repetitive and boring tasks, replace them with tools.
-* Save a lot of time for doing the core development.
-* Refresh the browser across multiple devices for testing once a file is changed.
-* Optimize website for performance by minifying and optimizing all our assets.
+* Save a lot of time for doing other important core development.
+* Optimize website for performance by minifying and optimizing all assets.
 
 ## Assumptions of This Article
 
 - WordPress installed in your development machine.
 - [Nodejs](https://nodejs.org/en/) and [npm](https://www.npmjs.com/) are installed.
-- Basic knowledge working with the command line.
+- Command line basic knowledge.
 
 ## Introduction to Gulp
 
-Gulp is a JavaScript task runner that will help us automate a time consuming tasks like CSS compressing, Sass compile, image optimization, and other tasks.
+Gulp is a JavaScript task runner that will help us automate a time consuming tasks like CSS compressing, Sass compile, image optimization, or browser refresh.
 
-We need to install [Gulp](http://gulpjs.com/) globally in our system, and later we will see how to install it as a package inside our theme. Assuming Node.js is installed in our machine, we can install Gulp using npm like: 
+Gulp is a tool we can teach it to do some actions after something is happened, for example consider the following scenarios:
+
+- Every time I change a Sass file, compile Sass and output a minified CSS file.
+- When I add a new Image in the images folder, optimize this image and move it to a new dedicated folder for optimized images.
+- When I change a PHP file, automatically refresh the browser.
+
+First, you need to install [Gulp](http://gulpjs.com/) globally in your system, and later we will see how to install it as a package inside your theme.
+
+Assuming Node.js is installed, open the command line tool, then you can install Gulp using npm as: 
 
 ```
 npm install --global gulp
 ```
 
+Once the installation is done, you can test the Gulp version by writing `gulp -v` and you can get a response like:
+
+```
+➜  ~ gulp -v
+[17:19:46] CLI version 3.9.1
+[17:19:46] Local version 3.9.1
+```
+
 ## Theme Setup
 
-We will use the [underscore](http://underscores.me/) as our base theme. We can navigate to [underscores.me](http://underscores.me/), generate a new theme and give it a name like `gulp-wordpress`, download it to the WordPress themes directory, then activate it from the dashboard.
+In this tutorial I will use the [underscore](http://underscores.me/) as the base theme. You can navigate to [underscores.me](http://underscores.me/), generate a new theme and give it a name like `gulp-wordpress`, download it to the WordPress themes directory, then activate it from the dashboard.
 
-From the command line, we can navigate to the `gulp-wordpress` theme directory where we have added the theme, for example in my case:
+From the command line, navigate to the `gulp-wordpress` theme directory where you have added the theme, for example in my case:
 
 ```
 cd ~/www/wordpress/wp-content/themes/gulp-wordpress
 ```
 
-Next we need to run the `npm init` command and follow a few simple steps to create a `package.json` file which will include some information about the theme and the used packages in our project.
+Next, run the `npm init` command and follow a few simple steps to create a `package.json` file which will include some information about the theme and the packages that will be installed later.
 
-After finishing up the steps, we will have a starting file that looks similar to this:
+After finishing up the steps, you will have a starting file that looks similar to this:
 
 ```js
 {
   "name": "gulp-wordpress",
-  "version": "1.0.0",
+  "version": "1.0",
   "description": "Automate WordPress Theme Development Workflow with Gulp",
   "main": "gulpfile.js",
-  "author": "Ahmad Ajmi"
+  "author": "Your Awesome Name"
 }
 ```
 
-Next, we’ll install Gulp as `devDependencies`:
+Next, install Gulp as `devDependencies`:
 
 ```
 npm install gulp --save-dev
@@ -59,15 +76,15 @@ npm install gulp --save-dev
 
 A `node_modules` directory is now created inside the theme contains all the Gulp source files, and `package.json` file has been updated to include Gulp as a development dependency.
 
-Some Gulp tasks like [gulp-autoprefixer](https://www.npmjs.com/package/gulp-autoprefixer) require ES6-style Promises support, so we can install the [es6-promise](https://github.com/jakearchibald/es6-promise) polyfill, and then require it at the top of the `gulpfile.js` as we will do next.
+Some Gulp tasks like [gulp-autoprefixer](https://www.npmjs.com/package/gulp-autoprefixer) require ES6-style Promises support, so you can install the [es6-promise](https://github.com/jakearchibald/es6-promise) polyfill, and then require it at the top of the `gulpfile.js` as we will do next.
 
 ```
 npm install es6-promise --save-dev
 ```
 
-Let's create an empty `gulpfile.js` configuration file, which will be used to define our Gulp tasks such as JavaScript and Sass.
+The last step to configure Gulp is to create an empty `gulpfile.js` configuration file, which will be used to define Gulp tasks such as JavaScript and Sass.
 
-Our `gulpfile.js` starter file will be like this:
+The `gulpfile.js` starter file will be like this:
 
 ```js
 require('es6-promise').polyfill();
@@ -80,10 +97,10 @@ gulp.task('default');
 
 What we have done above is:
 
-- We required the `es6-promise` polyfill on top of the file, then we required gulp.
+- Required the `es6-promise` polyfill on top of the file, then gulp is required.
 - Create a `default` task.
 
-To make sure that Gulp is running and everything is done perfectly, we can run the `gulp` in the command line to execute the `default` task we created in the `gulpfile.js` file, and the output should be similar to:
+To make sure that Gulp is running and everything is done perfectly, run `gulp` in the command line to execute the `default` task created in the `gulpfile.js` file, and the output should be similar to:
 
 ```
 [16:33:13] Using gulpfile ~/www/wordpress/wp-content/themes/gulp-wordpress/gulpfile.js
@@ -91,7 +108,7 @@ To make sure that Gulp is running and everything is done perfectly, we can run t
 [16:33:13] Finished 'default' after 58 μs
 ```
 
-At this point, our theme is ready for new tasks, and it's time to go through some common tasks that we can use in development everyday.
+At this point, the theme is ready for new tasks, and it's time to go through some common tasks that could be used to speed up development.
 
 ## Speeding up Development with Gulp Tasks
 
@@ -162,8 +179,6 @@ Now we can run `gulp sass` task directly, this will compile our `style.scss` fil
 
 Another way to run the `sass` task, is to pass the task name as a second parameter to the `default` task, and by running `gulp`, the `sass` task will be executed.
 
-**RTL Style**
-
 To automate the `rtl.css` file automatically, we can use [`gulp-rtlcss`](https://www.npmjs.com/package/gulp-rtlcss) plugin to auto convert LTR CSS to RTL, so we write Sass in one file then gulp will generate the `style.css` file then generate `rtl.css` file based on it. The second plugin is the [`gulp-rename`](https://www.npmjs.com/package/gulp-rename) which will rename the RTL file to `rtl.css` automatically.
 
 ```
@@ -188,11 +203,13 @@ gulp.task('sass', function() {
 });
 ```
 
-To read more about Sass structure it, and how to use it with Gulp you can read:
+To read more about Sass structure, and how to use it with Gulp you can read:
 
 [Architecture for a Sass Project](Architecture for a Sass Project)
 
 [A Simple Gulp’y Workflow For Sass](http://www.sitepoint.com/simple-gulpy-workflow-sass/)
+
+Also note that I have used Sass as an example, and if you prefer another tool like Less for example you will find a Gulp plugin for it.
 
 ### Watching Files
 
