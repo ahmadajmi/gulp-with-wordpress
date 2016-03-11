@@ -114,13 +114,13 @@ At this point, the theme is ready for new tasks, and it's time to go through som
 
 ### Sass
 
-We will need to install some packages to compile and autoprefix [Sass](http://sass-lang.com/).
+If you are using Sass to write CSS, two things needed to be automated, the first one is to compile Sass to CSS, the second is to use autoprefixer. Also note that I'm Sass as an example, if you prefer another tool like Less for example you will find a Gulp plugin for it.
+
+First, install [`gulp-sass`](https://www.npmjs.com/package/gulp-sass) and [`gulp-autoprefixer`](https://www.npmjs.com/package/gulp-autoprefixer).
 
 ```
 npm install gulp-sass gulp-autoprefixer --save-dev
 ```
-
-The above command will install [`gulp-sass`](https://www.npmjs.com/package/gulp-sass) and [`gulp-autoprefixer`](https://www.npmjs.com/package/gulp-autoprefixer) as `devDependencies` inside `package.json` file. 
 
 The next step is to create a Sass directory with a basic structure.
 
@@ -129,20 +129,25 @@ The next step is to create a Sass directory with a basic structure.
 │   └── style.scss
 ```
 
-The `style.scss` is the main and a starting point file, you are free to create your Sass architecture and import other components, modules, functions inside it based on your preference. The first few lines will be the stylesheet header required by WordPress, then we can write or import other Sass files.
+The `style.scss` is the main starting point file, you are free to create your Sass architecture and import other components, modules, functions inside it based on your preference. 
+
+The first few lines will be the stylesheet header required by WordPress.
 
 ```css
 /*
-Theme Name: gulp-wordpress
-Theme URI: http://underscores.me/
-Author: Underscores.me
-Author URI: http://underscores.me/
-Description: Description
-Version: 1.0.0
-License: GNU General Public License v2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: gulp-wordpress
+  Theme Name: gulp-wordpress
+  Theme URI: http://example.com/
+  Author: Your Awesome Name
+  Author URI: http://example.com/
+  Description: Your Awesome Name Description
+  Version: 1.0
+  License:
+  License URI:
+  Text Domain: gulp-wordpress
 */
+
+// @import 'element/all'
+// @import 'components/all'
 
 body {
   color: #333;
@@ -150,19 +155,17 @@ body {
 }
 ```
 
-Next, we will write a task that will do the following things:
+The next step is to create a `sass` task that will do the following things:
 
 - Compile and autoprefix Sass.
 - Build a `style.css` file, which is the final CSS file used by WordPress.
 
-To do this, we will create a Gulp `sass` task as:
-
 ```js
 require('es6-promise').polyfill();
 
-var gulp = require('gulp');
-var sass = require('gulp-sass');
-var autoprefixer = require('gulp-autoprefixer');
+var gulp          = require('gulp');
+var sass          = require('gulp-sass');
+var autoprefixer  = require('gulp-autoprefixer');
 
 // Sass
 gulp.task('sass', function() {
@@ -175,9 +178,11 @@ gulp.task('sass', function() {
 gulp.task('default', ['sass']);
 ```
 
-Now we can run `gulp sass` task directly, this will compile our `style.scss` file and build a new `style.css` in the theme root. 
+Now, run `gulp sass` task directly into the command line, this will compile `style.scss` file, and build a new `style.css` in the theme root. 
 
-Another way to run the `sass` task, is to pass the task name as a second parameter to the `default` task, and by running `gulp`, the `sass` task will be executed.
+Another way to run the `sass` task, is to pass the task name as a second parameter to the `default` task as I did above, so by running `gulp`, the `sass` task will be executed.
+
+Another thing that is related to WordPress final CSS file is to include the table of content .....
 
 To automate the `rtl.css` file automatically, we can use [`gulp-rtlcss`](https://www.npmjs.com/package/gulp-rtlcss) plugin to auto convert LTR CSS to RTL, so we write Sass in one file then gulp will generate the `style.css` file then generate `rtl.css` file based on it. The second plugin is the [`gulp-rename`](https://www.npmjs.com/package/gulp-rename) which will rename the RTL file to `rtl.css` automatically.
 
@@ -208,8 +213,6 @@ To read more about Sass structure, and how to use it with Gulp you can read:
 [Architecture for a Sass Project](Architecture for a Sass Project)
 
 [A Simple Gulp’y Workflow For Sass](http://www.sitepoint.com/simple-gulpy-workflow-sass/)
-
-Also note that I have used Sass as an example, and if you prefer another tool like Less for example you will find a Gulp plugin for it.
 
 ### Watching Files
 
