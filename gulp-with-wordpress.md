@@ -6,7 +6,7 @@ Another thing is image compression, what if we setup a tool to auto compressing 
 
 In this tutorial, I’ll introduce [Gulp](http://gulpjs.com/), and how to integrate it with [WordPress](https://wordpress.org/) to automate and enhance your theme development process by putting together an automated workflow.
 
-## Why I Need to Automate my Development Workflow
+## Why You Need to Automate Your Development Workflow
 
 * Remove repetitive and boring tasks, replace them with tools.
 * Save a lot of time for doing other important core development.
@@ -162,12 +162,10 @@ The next step is to create a `sass` task that will do the following things:
 
 ```js
 require('es6-promise').polyfill();
-
 var gulp          = require('gulp');
 var sass          = require('gulp-sass');
 var autoprefixer  = require('gulp-autoprefixer');
 
-// Sass
 gulp.task('sass', function() {
   return gulp.src('./sass/*.scss')
   .pipe(sass())
@@ -268,32 +266,33 @@ Now you can run `gulp` in the command line to execute `sass` task first then the
 
 ### JavaScript
 
-For working with JavaScript, there are different tasks that are required to speed up and improve JavaScript development.
+For working with JavaScript, there are different tools required to speed up and improve JavaScript development workflow like:
+
+- Code validation with jshint.
+- Concatenate files.
+- Minify code.
+
+You can install theses plugins as following:
 
 ```
-// To lint JavaScript files
+// To validation JavaScript
 npm install jshint gulp-jshint --save-dev
-
-// To minify files
-npm install gulp-uglify --save-dev
 
 // To concatenate files
 npm install gulp-concat --save-dev
 
-// To rename the final file
-npm install gulp-rename --save-dev
+// To minify files
+npm install gulp-uglify --save-dev
 ```
 
-Next, we will require all the newly installed packages, then we can create a `js` task as:
+Next, in the we will require all the newly installed packages, then we can create a `js` task as:
+
+Next, inside `gulpfile.js` file require the newly installed plugins, add a new `js` task.
 
 ```js
-
 var jshint = require('gulp-jshint');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-
-// JavaScript Task
 
 gulp.task('js', function() {
   return gulp.src(['./js/*.js'])
@@ -305,11 +304,11 @@ gulp.task('js', function() {
 });
 ```
 
-After we run `gulp js` as a task command from the command line, a new file called `app.min.js`, and this file will be the final and the compressed file that we will add it to our theme.
+Now, run `gulp js` from the command line, a new `app.min.js` file will be generated which will be used in the theme.
 
-The task above will concatenate every single file inside the `/js` directory, and in the `_underscore` themes, theses files are `customizer.js`, `navigation.js`, and `skip-link-focus-fix.js`. 
+The task above will concatenate every single file inside the `/js` directory. In the `_underscore` themes, theses files are `customizer.js`, `navigation.js`, and `skip-link-focus-fix.js`. 
 
-If we just need to include a specific files, we can add them inside `gulp.src` array as:
+If you just need to include a specific files, you can add them inside `gulp.src` array as:
 
 ```js
 // JavaScript
@@ -317,18 +316,18 @@ If we just need to include a specific files, we can add them inside `gulp.src` a
 gulp.task('js', function() {
   return gulp.src([
     'js/navigation.js', 
-    'js/skip-link-focus-fix.js'])
+    'js/skip-link-focus-fix.js'
+  ])
   //
   //
 });
 ```
 
-This will just do all the operations on those two files, if we need to add another new file we need to only append it to the array.
+This will just do all the operations on those two files, if you need to add another new file you only need to append it to the array.
 
-We can also update the `watch` task to watch changes inside any JavaScipt file and then run the `js` task.
+You can also update the `watch` task to watch changes inside any JavaScipt file, then run the `js` task.
 
 ```js
-
 gulp.task('watch', function() {
   gulp.watch('./sass/**/*.scss', ['sass']);
   gulp.watch('./js/*.js', ['js']);
@@ -337,15 +336,15 @@ gulp.task('watch', function() {
 gulp.task('default', ['sass', 'js', 'watch']);
 ```
 
-Inside `functions.php` file, we can enqueue the final JavaSript file (`app.min.js`) as:
+Inside `functions.php` theme file, enqueue the final JavaSript file (`app.min.js`) as:
 
 ```php
 wp_enqueue_script( 'app-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20120206', true );
 ```
 
-We can remove other files enqueue as we already concatenated them using `gulp concat` task above. Including one file will speed up our website and improve performance as we should always do instead of loading too many files whether they are CSS or JavaScipt files.
+We can remove other enqueued files as we already concatenated them using `gulp concat` task above. Including one file will speed up and improve website performance instead of loading too many files.
 
-We can end up with the `gulp_wordpress_scripts` function inside `functions.php` that is looks like this:
+The enqueue function inside `functions.php` will end up to looks like this:
 
 ```php
 /**
@@ -480,10 +479,6 @@ What we have did above:
 
 - Add a `onError` function to log an error message, and to create a beep sound.
 - Update the `sass` task to use the `plumber` function and then pass the `onError` to it as a value to the `errorHandler` object property.
-
-## Switching Between Development & Production Environments
-
-## Resources
 
 ## Conclusion
 
