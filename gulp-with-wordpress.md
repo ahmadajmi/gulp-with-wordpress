@@ -108,9 +108,9 @@ To make sure that Gulp is running and everything is done perfectly, run `gulp` i
 [16:33:13] Finished 'default' after 58 μs
 ```
 
-At this point, the theme is ready for new tasks, and it's time to go through some common tasks that could be used to speed up development.
-
 ## Speeding up Development with Gulp Tasks
+
+At this point, the theme is ready for new tasks, and it's time to go through some common tasks that could be used to speed up development.
 
 ### Sass
 
@@ -238,6 +238,8 @@ gulp.task('sass', function() {
 
 Note that I added the `rtlcss` just after the `style.css` is generated then renamed the file to `rtl.css`, and the final step is to output it.
 
+Run `gulp sass`, and you will have `style.css` and `rtl.css` files generated.
+
 To read more about Sass structure, and how to use it with Gulp you can read:
 
 [Architecture for a Sass Project](Architecture for a Sass Project)
@@ -246,9 +248,11 @@ To read more about Sass structure, and how to use it with Gulp you can read:
 
 ### Watching Files
 
-Instead of doing `gulp sass` every time we make a change to a Sass file, we need to automate this by adding a new task to watch changes to any file.
+Instead of running `gulp sass` every time when you change a Sass file, a new task is required to do this automatically for you.
 
-So the watch task is used to watch the changes that are made in our files, and once that file is changed we need to do some action, in our case when a Sass file changes, run the `sass` task.
+So the watch task will be used to watch any changes made to a file, once that file is changed do some action, for example when a Sass file changes, run the `sass` task.
+
+Inside `gulpfile.js` file add a new `watch` task that will watch any changes in the `/sass` directory, then run the `sass` task. The next step is to update the `default` task with the watch task.
 
 ```js
 // Watch any file with `.scss` extension inside the sass directory.
@@ -260,7 +264,7 @@ gulp.task('watch', function() {
 gulp.task('default', ['sass', 'watch']);
 ```
 
-Now we can run `gulp` to run the `sass`, and `watch` tasks.
+Now you can run `gulp` in the command line to execute `sass` task first then the `watch` task will continue working to watch changes.
 
 ### JavaScript
 
