@@ -182,9 +182,35 @@ Now, run `gulp sass` task directly into the command line, this will compile `sty
 
 Another way to run the `sass` task, is to pass the task name as a second parameter to the `default` task as I did above, so by running `gulp`, the `sass` task will be executed.
 
-A good WordPress practice is to include CSS table of content to the final CSS file at the top of the file just after the stylesheet header. ...
+A good WordPress practice is to include the CSS table of content to the final CSS file at the top just after the stylesheet header, then add a CSS comment before any code or import related to the section. 
 
-To automate the `rtl.css` file automatically, [`gulp-rtlcss`](https://www.npmjs.com/package/gulp-rtlcss) plugin could be used auto convert LTR CSS to RTL, so you write Sass in one file then gulp will generate the `style.css` file then generate `rtl.css` file based on it. 
+Note that the comment is a normal CSS style comment like (`/*----- 1.0 Normalize -----*/`) and not a Sass comment like (`//1.0 Normalize`) and this is important because we need this comment to exist in the final CSS file, but with a Sass style comment it will be hidden by the Sass compiler. Also note that this is used in the stylesheet header, and the table of contents.
+
+```css
+/*
+  Stylesheet Header ...
+*/
+
+/*--------------------
+>>> TABLE OF CONTENTS:
+----------------------
+1.0 Normalize
+2.0 Typography
+3.0 Icons
+4.0 Components
+--------------------*/
+
+/*----- 1.0 Normalize -----*/
+@import 'normalize';
+
+/*----- 2.0 Typography -----*/
+@import 'typography';
+
+```
+
+To automate generating the `rtl.css` file automatically, [`gulp-rtlcss`](https://www.npmjs.com/package/gulp-rtlcss) plugin could be used to auto convert LTR CSS to RTL, so you write Sass in one file then gulp will generate the `style.css` file then generate `rtl.css` file based on it.
+
+The idea behind `gulp-rtlcss` is to convert all the CSS properties like floats, text align, text direction, and other properties from left to right.
 
 The second plugin is the [`gulp-rename`](https://www.npmjs.com/package/gulp-rename) which will rename the file to `rtl.css` automatically.
 
@@ -192,23 +218,25 @@ The second plugin is the [`gulp-rename`](https://www.npmjs.com/package/gulp-rena
 npm install gulp-rtlcss gulp-rename --save-dev
 ```
 
-The next step is to modify the `sass` task to use the `rtlcss` and in this step the plugin will convert all the CSS properties like floats and text direction from left to right.
+The next step is to included the newly installed plugins and modify the `sass` task to use `rtlcss` and in this step the plugin will convert all the CSS properties like floats and text direction from left to right.
 
 ```js
-var rename       = require('gulp-rename');
 var rtlcss       = require('gulp-rtlcss');
+var rename       = require('gulp-rename');
 
 gulp.task('sass', function() {
   return gulp.src('./sass/*.scss')
   .pipe(sass())
   .pipe(autoprefixer())
-  .pipe(gulp.dest('./'))              // Output LTR stylesheets
+  .pipe(gulp.dest('./'))              // Output LTR stylesheets (style.css)
 
   .pipe(rtlcss())                     // Convert to RTL
   .pipe(rename({ basename: 'rtl' }))  // Rename to rtl.css
-  .pipe(gulp.dest('./'));             // Output RTL stylesheets
+  .pipe(gulp.dest('./'));             // Output RTL stylesheets (rtl.css)
 });
 ```
+
+Note that I added the `rtlcss` just after the `style.css` is generated then renamed the file to `rtl.css`, and the final step is to output it.
 
 To read more about Sass structure, and how to use it with Gulp you can read:
 
