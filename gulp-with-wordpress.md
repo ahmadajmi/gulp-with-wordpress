@@ -484,4 +484,4 @@ gulp.task('watch', function() {
 
 ## Conclusion
 
-As we have seen, working with automation tools has become very important for the development process, things like Sass compile, browser reload after each action, production and environment mode, image optimization, all of theses tools should be automated from the start with one command, so we can focus on the the core development ideas.
+As you’ve seen, working with automation tools becomes very important to improve and speed development process, so everything that is manually done should be automated to save time and to change the way we develop for the web.
