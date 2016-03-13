@@ -248,17 +248,17 @@ To read more about Sass structure, and how to use it with Gulp you can read:
 
 ### Error Handler
 
-Sometimes while we are writing code we might write something wrong, say we mistypes undefined Sass variable, and while we are watching files, Gulp will break because the specific task can't compile that variable. This is annoying because we have to retype `gulp` again to start working. Aw can fix this issue by modifying our tasks to give a notification in the command line to that specific error, so we can know exactly what's happening and in which file, and also Gulp will not stop working.
+Sometimes while you are writing code, you might write something wrong, say you mistypes undefined Sass variable, and in the middle of work while you are watching files, Gulp will break because the specific task can't compile that variable. This is annoying because you have to start Gulp again to continue working. 
 
-We will use [gulp-plumber](https://www.npmjs.com/package/gulp-plumber) plugin that will prevent Gulp breaking caused by errors from gulp plugins.
+You can fix this by using [gulp-plumber](https://www.npmjs.com/package/gulp-plumber) plugin that will prevent Gulp breaking caused by errors.
 
-We need to install `gulp-plumber` as a development dependency:
+Install `gulp-plumber` as a development dependency:
 
 ```
 npm install gulp-plumber --save-dev
 ```
 
-Next, we will add another plugin for adding a simple sound, and to add colors to the error message, we will need to install [gulp-util](https://github.com/gulpjs/gulp-util) plugin.
+To improve error handling, install the [gulp-util](https://github.com/gulpjs/gulp-util) utility functions package to customize the error message, add beep sound once the error occurred, plus adding colors to the error message which is useful identifying the error.
 
 ```
 npm install gulp-util --save-dev
@@ -285,7 +285,9 @@ gulp.task('sass', function() {
 What we have did above:
 
 - Add a `onError` function to log an error message, and to create a beep sound.
-- Update the `sass` task to use the `plumber` function and then pass the `onError` to it as a value to the `errorHandler` object property.
+- Update the `sass` task to use the `plumber` function, and then pass the `onError` to it as a value to the `errorHandler` object property.
+
+By doing this you can know exactly what's happening on errors, in which file, and also Gulp will not stop working.
 
 ### Watching Files
 
