@@ -20,23 +20,25 @@ In this tutorial, I’ll introduce [Gulp](http://gulpjs.com/), and how to integr
 
 ## Introduction to Gulp
 
-Gulp is a JavaScript task runner that will help us automate a time consuming tasks like CSS compressing, Sass compile, image optimization, or browser refresh.
+Gulp is a JavaScript task runner that will help to automate a time consuming tasks like CSS compressing, Sass compile, image optimization, or browser reload.
 
-Gulp is a tool we can teach it to do some actions after something is happened, for example consider the following scenarios:
+Gulp giving you the tools to do some actions (tasks) for a specific need after something is happened, for example consider the following scenarios:
 
-- Every time I change a Sass file, compile Sass and output a minified CSS file.
-- When I add a new Image in the images folder, optimize this image and move it to a new dedicated folder for optimized images.
-- When I change a PHP file, automatically refresh the browser.
+- Every time you save a Sass file, compile Sass and output a minified CSS file.
+- When you add a new Image to the images folder, optimize this image and move it to a new dedicated folder.
+- When you save a PHP or a Sass file, automatically reload the browser.
 
-First, you need to install [Gulp](http://gulpjs.com/) globally in your system, and later we will see how to install it as a package inside your theme.
+### Gulp Setup
 
-Assuming Node.js is installed, open the command line tool, then you can install Gulp using npm as: 
+First, you need to install [Gulp](http://gulpjs.com/) globally in your system, and later I will show you how to install it as a package inside your theme.
+
+Assuming Node.js is installed, open the command line tool, then install Gulp using npm as:
 
 ```
 npm install --global gulp
 ```
 
-Once the installation is done, you can test the Gulp version by writing `gulp -v` and you can get a response like:
+Now, run `gulp -v` (Gulp version) to test that Gulp is installed properly, and you should get output similar to:
 
 ```
 ➜  ~ gulp -v
@@ -68,7 +70,7 @@ After finishing up the steps, you will have a starting file that looks similar t
 }
 ```
 
-Next, install Gulp as `devDependencies`:
+Next, install Gulp in devDependencies
 
 ```
 npm install gulp --save-dev
@@ -112,7 +114,7 @@ To make sure that Gulp is running and everything is done perfectly, run `gulp` i
 
 At this point, the theme is ready for new tasks, and it's time to go through some common tasks that could be used to speed up development.
 
-### Sass
+### Working with CSS (Sass)
 
 If you are using Sass to write CSS, two things needed to be automated, the first one is to compile Sass to CSS, the second is to use autoprefixer. Also note that I'm Sass as an example, if you prefer another tool like Less for example you will find a Gulp plugin for it.
 
@@ -244,201 +246,6 @@ To read more about Sass structure, and how to use it with Gulp you can read:
 
 [A Simple Gulp’y Workflow For Sass](http://www.sitepoint.com/simple-gulpy-workflow-sass/)
 
-### Watching Files
-
-Instead of running `gulp sass` every time when you change a Sass file, a new task is required to do this automatically for you.
-
-So the watch task will be used to watch any changes made to a file, once that file is changed do some action, for example when a Sass file changes, run the `sass` task.
-
-Inside `gulpfile.js` file add a new `watch` task that will watch any changes in the `/sass` directory, then run the `sass` task. The next step is to update the `default` task with the watch task.
-
-```js
-// Watch any file with `.scss` extension inside the sass directory.
-gulp.task('watch', function() {
-  gulp.watch('./sass/**/*.scss', ['sass']);
-})
-
-// Add watch task to Gulp default task.
-gulp.task('default', ['sass', 'watch']);
-```
-
-Now you can run `gulp` in the command line to execute `sass` task first then the `watch` task will continue working to watch changes.
-
-### JavaScript
-
-For working with JavaScript, there are different tools required to speed up and improve JavaScript development workflow like:
-
-- Code validation with jshint.
-- Concatenate files.
-- Minify code.
-
-You can install theses plugins as following:
-
-```
-// To validation JavaScript
-npm install jshint gulp-jshint --save-dev
-
-// To concatenate files
-npm install gulp-concat --save-dev
-
-// To minify files
-npm install gulp-uglify --save-dev
-```
-
-Next, in the we will require all the newly installed packages, then we can create a `js` task as:
-
-Next, inside `gulpfile.js` file require the newly installed plugins, add a new `js` task.
-
-```js
-var jshint = require('gulp-jshint');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-
-gulp.task('js', function() {
-  return gulp.src(['./js/*.js'])
-    .pipe(jshint())
-    .pipe(concat('app.js'))
-    .pipe(rename({suffix: '.min'}))
-    .pipe(uglify())
-    .pipe(gulp.dest('./js'))
-});
-```
-
-Now, run `gulp js` from the command line, a new `app.min.js` file will be generated which will be used in the theme.
-
-The task above will concatenate every single file inside the `/js` directory. In the `_underscore` themes, theses files are `customizer.js`, `navigation.js`, and `skip-link-focus-fix.js`. 
-
-If you just need to include a specific files, you can add them inside `gulp.src` array as:
-
-```js
-// JavaScript
-
-gulp.task('js', function() {
-  return gulp.src([
-    'js/navigation.js', 
-    'js/skip-link-focus-fix.js'
-  ])
-  //
-  //
-});
-```
-
-This will just do all the operations on those two files, if you need to add another new file you only need to append it to the array.
-
-You can also update the `watch` task to watch changes inside any JavaScipt file, then run the `js` task.
-
-```js
-gulp.task('watch', function() {
-  gulp.watch('./sass/**/*.scss', ['sass']);
-  gulp.watch('./js/*.js', ['js']);
-});
-
-gulp.task('default', ['sass', 'js', 'watch']);
-```
-
-Inside `functions.php` theme file, enqueue the final JavaSript file (`app.min.js`) as:
-
-```php
-wp_enqueue_script( 'app-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20120206', true );
-```
-
-We can remove other enqueued files as we already concatenated them using `gulp concat` task above. Including one file will speed up and improve website performance instead of loading too many files.
-
-The enqueue function inside `functions.php` will end up to looks like this:
-
-```php
-/**
- * Enqueue scripts and styles.
- */
-function gulp_wordpress_scripts() {
-  wp_enqueue_style( 'gulp-wordpress-style', get_stylesheet_uri() );
-
-  wp_enqueue_script( 'gulp-wordpress-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20120206', true );
-}
-add_action( 'wp_enqueue_scripts', 'gulp_wordpress_scripts' );
-```
-
-### Images
-
-Now with images, most of images are so much big, especially if we are using some images from websites like [unsplash](https://unsplash.com/) which sometimes reach more than 5 MB in size, how can we automate image compression in Gulp, that's what we will do next.
-
-To minify images we need to install the [gulp-imagemin](https://www.npmjs.com/package/gulp-imagemin) to minify PNG, JPEG, GIF and SVG images.
-
-```
-npm install gulp-imagemin --save-dev
-```
-
-We can create two folders:
-
-1. `/images`: Source folder contains the original images.
-2. `/dest/images`: Destination folder contains the optimized images.
-
-And the task that we will write will see images in the first folder, then optimize them and move them to the optimized folder.
-
-```js
-var imagemin = require('gulp-imagemin');
-var pngquant = require('imagemin-pngquant');
-
-// Images
-
-gulp.task('images', function() {
-  return gulp.src('./images/*')
-    .pipe(plumber({ errorHandler: onError }))
-    .pipe(imagemin({
-      optimizationLevel: 7,
-      progressive: true,
-      use: [pngquant()]
-    }))
-    .pipe(gulp.dest('./dest/images'));
-});
-```
-
-The next is to watch the `/images`, and every time we drag a new image there it will compress the new image automatically for us.
-
-```js
-gulp.task('watch', function() {
-  //
-  gulp.watch('./images/*', ['images']);
-});
-```
-
-[Image Optimizing with Gulp](http://diezjietal.be/blog/2015/02/18/image-optimizers.html)
-
-### Browser Refresh with BrowserSync
-
-First, we'll need to install Browsersync as development dependency.
-
-```
-npm install browser-sync --save-dev
-```
-
-Then we will require Browsersync within our `gulpfile.js` file:
-
-```js
-var browserSync = require('browser-sync').create();
-var reload      = browserSync.reload;
-```
-
-The next step is to add the Browsersync to the watch task as:
-
-```js
-gulp.task('watch', function() {
-  browserSync.init({
-    files: ['./**/*.php'],
-    proxy: 'http://localhost:8888/wordpress/',
-  });
-  gulp.watch('./sass/**/*.scss', ['sass', reload]);
-  gulp.watch('./js/*.js', ['js', reload]);
-  gulp.watch('./images/*', ['images', reload]);
-});
-```
-
-We can now run `gulp` and it will open a new tab in the browser to the localhost, and this localhost could be used in any device connected to the same network, so in every change browserSync will reload all the browsers.
-
-We also have updated the `sass`, `js` and `images` watch tasks to reload the page if any changes happened to the files or we changed the content of the images folder.
-
-Notice that we will need to update the [proxy](https://www.browsersync.io/docs/options/#option-proxy) option to our local development URL. For example, if our local development URL is `localhost:8888/wordpress`, we would update the proxy value above with it.
-
 ### Error Handler
 
 Sometimes while we are writing code we might write something wrong, say we mistypes undefined Sass variable, and while we are watching files, Gulp will break because the specific task can't compile that variable. This is annoying because we have to retype `gulp` again to start working. Aw can fix this issue by modifying our tasks to give a notification in the command line to that specific error, so we can know exactly what's happening and in which file, and also Gulp will not stop working.
@@ -479,6 +286,199 @@ What we have did above:
 
 - Add a `onError` function to log an error message, and to create a beep sound.
 - Update the `sass` task to use the `plumber` function and then pass the `onError` to it as a value to the `errorHandler` object property.
+
+### Watching Files
+
+Instead of running `gulp sass` every time when you change a Sass file, a new task is required to do this automatically for you.
+
+So the watch task will be used to watch any changes made to a file, once that file is changed do some action, for example when a Sass file changes, run the `sass` task.
+
+Inside `gulpfile.js` file add a new `watch` task that will watch any changes in the `/sass` directory, then run the `sass` task. The next step is to update the `default` task with the watch task.
+
+```js
+// Watch any file with `.scss` extension inside the sass directory.
+gulp.task('watch', function() {
+  gulp.watch('./sass/**/*.scss', ['sass']);
+})
+
+// Add watch task to Gulp default task.
+gulp.task('default', ['sass', 'watch']);
+```
+
+Now you can run `gulp` in the command line to execute `sass` task first then the `watch` task will continue working to watch changes.
+
+### Browser Refresh with BrowserSync
+
+First, we'll need to install Browsersync as development dependency.
+
+```
+npm install browser-sync --save-dev
+```
+
+Then we will require Browsersync within our `gulpfile.js` file:
+
+```js
+var browserSync = require('browser-sync').create();
+var reload      = browserSync.reload;
+```
+
+The next step is to add the Browsersync to the watch task as:
+
+```js
+gulp.task('watch', function() {
+  browserSync.init({
+    files: ['./**/*.php'],
+    proxy: 'http://localhost:8888/wordpress/',
+  });
+  gulp.watch('./sass/**/*.scss', ['sass', reload]);
+  gulp.watch('./js/*.js', ['js', reload]);
+  gulp.watch('./images/*', ['images', reload]);
+});
+```
+
+We can now run `gulp` and it will open a new tab in the browser to the localhost, and this localhost could be used in any device connected to the same network, so in every change browserSync will reload all the browsers.
+
+We also have updated the `sass`, `js` and `images` watch tasks to reload the page if any changes happened to the files or we changed the content of the images folder.
+
+Notice that we will need to update the [proxy](https://www.browsersync.io/docs/options/#option-proxy) option to our local development URL. For example, if our local development URL is `localhost:8888/wordpress`, we would update the proxy value above with it.
+
+### JavaScript
+
+For working with JavaScript, there are different tools required to speed up and improve JavaScript development workflow like:
+
+- Check code errors with jshint.
+- Concatenate many JavaScript files into a single file.
+- Minify code to get a much smaller file size
+
+You can install theses plugins as following:
+
+```
+// To validation JavaScript
+npm install jshint gulp-jshint --save-dev
+
+// To concatenate files
+npm install gulp-concat --save-dev
+
+// To minify files
+npm install gulp-uglify --save-dev
+```
+
+Next, in the we will require all the newly installed packages, then we can create a `js` task as:
+
+Next, inside `gulpfile.js` file require the newly installed plugins, add a new `js` task.
+
+```js
+var jshint = require('gulp-jshint');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+
+gulp.task('js', function() {
+  return gulp.src(['./js/*.js'])
+    .pipe(jshint())
+    .pipe(concat('app.js'))
+    .pipe(rename({suffix: '.min'}))
+    .pipe(uglify())
+    .pipe(gulp.dest('./js'))
+});
+```
+
+This task takes any file that ends with `.js` extension inside the `./js` directory, check for code errors with jshint, then concatenate them to `app.js`, and as we need a minified output; it's time to rename the file to `app.min.js`, then minify the code, and the last step it to output the file to the `./js` directory.
+
+Now, run `gulp js` from the command line, a new `app.min.js` file will be generated which will be used in the theme.
+
+By default, the `_underscore` theme includes `customizer.js`, `navigation.js`, and `skip-link-focus-fix.js` files under the `/js` directory.
+
+If you just need to include a specific files, you can add them inside `gulp.src` array as:
+
+```js
+gulp.task('js', function() {
+  return gulp.src([
+    './js/navigation.js', 
+    './js/skip-link-focus-fix.js'
+  ])
+  //
+  //
+});
+```
+
+This will just do all the operations on those two files, if you need to add another new file you only need to append it to the array.
+
+You can also update the `watch` task to watch changes to any JavaScipt file, then run the `js` task.
+
+```js
+gulp.task('watch', function() {
+  gulp.watch('./sass/**/*.scss', ['sass']);
+  gulp.watch('./js/*.js', ['js']);
+});
+
+gulp.task('default', ['sass', 'js', 'watch']);
+```
+
+Inside `functions.php` theme file, enqueue the generated `app.min.js` file as:
+
+```php
+wp_enqueue_script( 'app-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20120206', true );
+```
+
+You can remove other enqueued JavaScript files as they already concatenated and minified into a single file. Including one file will speed up and improve website performance instead of loading too many files.
+
+The enqueue function inside `functions.php` will end up to look similar to:
+
+```php
+/**
+ * Enqueue scripts and styles.
+ */
+function gulp_wordpress_scripts() {
+  wp_enqueue_style( 'gulp-wordpress-style', get_stylesheet_uri() );
+
+  wp_enqueue_script( 'gulp-wordpress-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20120206', true );
+}
+add_action( 'wp_enqueue_scripts', 'gulp_wordpress_scripts' );
+```
+
+### Images
+
+To minify images you need to install the [gulp-imagemin](https://www.npmjs.com/package/gulp-imagemin) to minify PNG, JPEG, GIF, and SVG images.
+
+```
+npm install gulp-imagemin --save-dev
+```
+
+You can create two folders:
+
+1. `/images`: Source folder contains the original images.
+2. `/dest/images`: Destination folder contains the optimized images.
+
+And the task that we will write will see images in the first folder, then optimize them and move them to the optimized folder.
+
+```js
+var imagemin = require('gulp-imagemin');
+var pngquant = require('imagemin-pngquant');
+
+// Images
+
+gulp.task('images', function() {
+  return gulp.src('./images/*')
+    .pipe(plumber({ errorHandler: onError }))
+    .pipe(imagemin({
+      optimizationLevel: 7,
+      progressive: true,
+      use: [pngquant()]
+    }))
+    .pipe(gulp.dest('./dest/images'));
+});
+```
+
+The next is to watch the `/images`, and every time we drag a new image there it will compress the new image automatically for us.
+
+```js
+gulp.task('watch', function() {
+  //
+  gulp.watch('./images/*', ['images']);
+});
+```
+
+[Image Optimizing with Gulp](http://diezjietal.be/blog/2015/02/18/image-optimizers.html)
 
 ## Conclusion
 
