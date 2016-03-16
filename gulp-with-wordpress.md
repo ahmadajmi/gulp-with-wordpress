@@ -1,9 +1,5 @@
 # WordPress Theme Development Automation with Gulp
 
-I think the most common thing as web developers do is to reload the browser after each change in our code. What if we are testing in more than one browser or mobile devices, we will have to hit the refresh button on every single screen. What if something is responsible for doing this for us. 
-
-Another thing is image compression, what if we setup a tool to auto compressing images for us once we put it in the images folder, think about automating everything we do everyday by hand, Sass compile, file concatenation.
-
 In this tutorial, I’ll introduce [Gulp](http://gulpjs.com/), and how to integrate it with [WordPress](https://wordpress.org/) to automate and enhance your theme development process by putting together an automated workflow.
 
 ## Why You Need to Automate Your Development Workflow
@@ -64,13 +60,13 @@ After finishing up the steps, you will have a starting file that looks similar t
 {
   "name": "gulp-wordpress",
   "version": "1.0",
-  "description": "Automate WordPress Theme Development Workflow with Gulp",
+  "description": "WordPress Theme Development Automation with Gulp",
   "main": "gulpfile.js",
   "author": "Your Awesome Name"
 }
 ```
 
-Next, install Gulp in devDependencies
+Next, install Gulp as a development dependency:
 
 ```
 npm install gulp --save-dev
@@ -236,7 +232,7 @@ gulp.task('sass', function() {
 });
 ```
 
-Note that I added the `rtlcss` just after the `style.css` is generated then renamed the file to `rtl.css`, and the final step is to output it.
+Note that I added the `rtlcss()` function just after `style.css` file generated then renamed the file to `rtl.css`, and the final step is to output it.
 
 Run `gulp sass`, and you will have `style.css` and `rtl.css` files generated.
 
@@ -250,9 +246,9 @@ To read more about Sass structure, and how to use it with Gulp you can read:
 
 Sometimes while you are writing code, you might write something wrong, say you mistypes undefined Sass variable, and in the middle of work while you are watching files, Gulp will break because the specific task can't compile that variable. This is annoying because you have to start Gulp again to continue working. 
 
-You can fix this by using [gulp-plumber](https://www.npmjs.com/package/gulp-plumber) plugin that will prevent Gulp breaking caused by errors.
+You can fix this by using [gulp-plumber](https://www.npmjs.com/package/gulp-plumber) plugin, which will prevent Gulp breaking caused by errors.
 
-Install `gulp-plumber` as a development dependency:
+Install `gulp-plumber`:
 
 ```
 npm install gulp-plumber --save-dev
@@ -284,8 +280,8 @@ gulp.task('sass', function() {
 
 What we have did above:
 
-- Add a `onError` function to log an error message, and to create a beep sound.
-- Update the `sass` task to use the `plumber` function, and then pass the `onError` to it as a value to the `errorHandler` object property.
+- Add `onError` function to log the error message, and create a beep sound.
+- Update the `sass` task to use the `plumber` function, then pass the `onError` function to the `errorHandler` object property. 
 
 By doing this you can know exactly what's happening on errors, in which file, and also Gulp will not stop working.
 
@@ -293,31 +289,31 @@ By doing this you can know exactly what's happening on errors, in which file, an
 
 Instead of running `gulp sass` every time when you change a Sass file, a new task is required to do this automatically for you.
 
-So the watch task will be used to watch any changes made to a file, once that file is changed do some action, for example when a Sass file changes, run the `sass` task.
+So the watch task will be used to watch any changes made to a file, so once that file is changed, do some action. For example when you save a Sass file, `sass` task should run automatically.
 
-Inside `gulpfile.js` file add a new `watch` task that will watch any changes in the `/sass` directory, then run the `sass` task. The next step is to update the `default` task with the watch task.
+Inside `gulpfile.js` file add a new `watch` task to watch any changes in the `/sass` directory, then run the `sass` task. The next step is to update the `default` task with the watch task.
 
 ```js
-// Watch any file with `.scss` extension inside the sass directory.
 gulp.task('watch', function() {
   gulp.watch('./sass/**/*.scss', ['sass']);
 })
 
-// Add watch task to Gulp default task.
 gulp.task('default', ['sass', 'watch']);
 ```
 
-Now you can run `gulp` in the command line to execute `sass` task first then the `watch` task will continue working to watch changes.
+Now you can run `gulp` in the command line to execute `sass` task first then the `watch` task will continue working.
 
 ### Browser Refresh with BrowserSync
 
-First, we'll need to install Browsersync as development dependency.
+What if you are testing with more than one browser or mobile devices, you will have to hit the refresh button on every single screen. What if something is responsible for doing this for you. 
+
+First, you'll need to install Browsersync.
 
 ```
 npm install browser-sync --save-dev
 ```
 
-Then we will require Browsersync within our `gulpfile.js` file:
+Next, require Browsersync inside `gulpfile.js` file:
 
 ```js
 var browserSync = require('browser-sync').create();
@@ -337,6 +333,8 @@ gulp.task('watch', function() {
   gulp.watch('./images/*', ['images', reload]);
 });
 ```
+
+TODO: Explain the above code in more details, php files, ...
 
 We can now run `gulp` and it will open a new tab in the browser to the localhost, and this localhost could be used in any device connected to the same network, so in every change browserSync will reload all the browsers.
 
