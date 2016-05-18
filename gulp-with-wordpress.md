@@ -1,10 +1,10 @@
 # WordPress Theme Development Automation with Gulp
 
-In this tutorial, I’ll introduce [Gulp](http://gulpjs.com/), and how to integrate it with [WordPress](https://wordpress.org/) to automate and enhance your theme development process by putting together an automated workflow.
+In this tutorial, I’ll introduce [Gulp](http://gulpjs.com/), and how to integrate it with [WordPress](https://wordpress.org/) to automate and enhance theme development process by putting together an automated workflow.
 
 ## Why You Need to Automate Your Development Workflow
 
-* Remove repetitive and boring tasks, replace them with tools.
+* Remove repetitive and boring tasks, replace them with custom tools.
 * Save a lot of time for doing other important core development.
 * Optimize website for performance by minifying and optimizing all assets.
 
@@ -16,13 +16,13 @@ In this tutorial, I’ll introduce [Gulp](http://gulpjs.com/), and how to integr
 
 ## Introduction to Gulp
 
-Gulp is a JavaScript task runner that will help to automate a time consuming tasks like CSS compressing, Sass compile, image optimization, or browser reload.
+Gulp is a JavaScript task runner that will help automate a time consuming tasks like CSS compressing, Sass compile, image optimization, or browser reload.
 
 Gulp giving you the tools to do some actions (tasks) for a specific need after something is happened, for example consider the following scenarios:
 
-- Every time you save a Sass file, compile Sass and output a minified CSS file.
-- When you add a new Image to the images folder, optimize this image and move it to a new dedicated folder.
-- When you save a PHP or a Sass file, automatically reload the browser.
+- Every time you save a Sass file, Gulp will compile Sass and output a minified CSS file.
+- When you add a new Image to the images folder, Gulp will optimize this image and move it to a new dedicated folder.
+- When you save a PHP or a Sass file, Gulp will automatically reload the browser.
 
 ### Gulp Setup
 
@@ -38,13 +38,12 @@ Now, run `gulp -v` (Gulp version) to test that Gulp is installed properly, and y
 
 ```
 ➜  ~ gulp -v
-[17:19:46] CLI version 3.9.1
-[17:19:46] Local version 3.9.1
+[09:33:59] CLI version 3.9.1
 ```
 
 ## Theme Setup
 
-In this tutorial I will use the [underscore](http://underscores.me/) as the base theme. You can navigate to [underscores.me](http://underscores.me/), generate a new theme and give it a name like `gulp-wordpress`, download it to the WordPress themes directory, then activate it from the dashboard.
+In this tutorial I will use the [underscore](http://underscores.me/) as the base theme. To download it, navigate to [underscores.me](http://underscores.me/), generate a new theme and give it a name like `gulp-wordpress`, download it to the WordPress themes directory, then activate it from the dashboard.
 
 From the command line, navigate to the `gulp-wordpress` theme directory where you have added the theme, for example in my case:
 
@@ -59,10 +58,9 @@ After finishing up the steps, you will have a starting file that looks similar t
 ```js
 {
   "name": "gulp-wordpress",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "WordPress Theme Development Automation with Gulp",
-  "main": "gulpfile.js",
-  "author": "Your Awesome Name"
+  "author": "Name"
 }
 ```
 
@@ -72,7 +70,19 @@ Next, install Gulp as a development dependency:
 npm install gulp --save-dev
 ```
 
-A `node_modules` directory is now created inside the theme contains all the Gulp source files, and `package.json` file has been updated to include Gulp as a development dependency.
+A `node_modules` directory is now created inside the theme, contains Gulp package source files, and `package.json` file has been updated to include Gulp as a development dependency.
+
+```js
+{
+  "name": "gulp-wordpress",
+  "version": "1.0.0",
+  "description": "WordPress Theme Development Automation with Gulp",
+  "author": "Author Name",
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
+}
+```
 
 Some Gulp tasks like [gulp-autoprefixer](https://www.npmjs.com/package/gulp-autoprefixer) require ES6-style Promises support, so you can install the [es6-promise](https://github.com/jakearchibald/es6-promise) polyfill, and then require it at the top of the `gulpfile.js` as we will do next.
 
@@ -101,18 +111,18 @@ What we have done above is:
 To make sure that Gulp is running and everything is done perfectly, run `gulp` in the command line to execute the `default` task created in the `gulpfile.js` file, and the output should be similar to:
 
 ```
-[16:33:13] Using gulpfile ~/www/wordpress/wp-content/themes/gulp-wordpress/gulpfile.js
+[09:48:23] Using gulpfile ~/www/wordpress/wp-content/themes/gulp-wordpress/gulpfile.js
 [16:33:13] Starting 'default'...
 [16:33:13] Finished 'default' after 58 μs
 ```
 
 ## Speeding up Development with Gulp Tasks
 
-At this point, the theme is ready for new tasks, and it's time to go through some common tasks that could be used to speed up development.
+At this point, the theme is ready for new tasks, and it's time to go through some common tasks that you can use to speed up your theme development.
 
 ### Working with CSS (Sass)
 
-If you are using Sass to write CSS, two things needed to be automated, the first one is to compile Sass to CSS, the second is to use autoprefixer. Also note that I'm Sass as an example, if you prefer another tool like Less for example you will find a Gulp plugin for it.
+If you are using [Sass](http://sass-lang.com/) to write CSS, two main things needed to be automated, the first one is to compile Sass to CSS, the second is to use autoprefixer to add vendor prefixes to your CSS. Also note that I'm using Sass as an example, if you prefer another tool like [Less](http://lesscss.org/) for example, you will find a Gulp plugin for it.
 
 First, install [`gulp-sass`](https://www.npmjs.com/package/gulp-sass) and [`gulp-autoprefixer`](https://www.npmjs.com/package/gulp-autoprefixer).
 
@@ -129,23 +139,20 @@ The next step is to create a Sass directory with a basic structure.
 
 The `style.scss` is the main starting point file, you are free to create your Sass architecture and import other components, modules, functions inside it based on your preference. 
 
-The first few lines will be the stylesheet header required by WordPress.
+The first few lines will be the [*stylesheet header*](https://codex.wordpress.org/Theme_Development#Theme_Stylesheet) required by WordPress.
 
 ```css
 /*
-  Theme Name: gulp-wordpress
+  Theme Name: Gulp WordPress
   Theme URI: http://example.com/
-  Author: Your Awesome Name
+  Author: Author Name
   Author URI: http://example.com/
-  Description: Your Awesome Name Description
-  Version: 1.0
+  Description: Description
+  Version: 1.0.0
   License:
   License URI:
   Text Domain: gulp-wordpress
 */
-
-// @import 'element/all'
-// @import 'components/all'
 
 body {
   color: #333;
@@ -174,13 +181,15 @@ gulp.task('sass', function() {
 gulp.task('default', ['sass']);
 ```
 
-Now, run `gulp sass` task directly into the command line, this will compile `style.scss` file, and build a new `style.css` in the theme root. 
+Now, run `gulp sass` task directly from the command line, this will compile `style.scss` file, and build a new `style.css` file in the theme root. 
 
 Another way to run the `sass` task, is to pass the task name as a second parameter to the `default` task as I did above, so by running `gulp`, the `sass` task will be executed.
 
-A good WordPress practice is to include the CSS table of content to the final CSS file at the top just after the stylesheet header, then add a CSS comment before any code or import related to the section. 
+A good WordPress practice is to include the CSS table of content to the final CSS file at the top just after the *stylesheet header*, then add a CSS comment before any code or import related to the section. 
 
-Note that the comment is a normal CSS style comment like (`/*----- 1.0 Normalize -----*/`) and not a Sass comment like (`//1.0 Normalize`) and this is important because we need this comment to exist in the final CSS file, but with a Sass style comment it will be hidden by the Sass compiler. Also note that this is used in the stylesheet header, and the table of contents.
+Note that the comment is a normal CSS style comment like (`/*----- 1.0 Normalize -----*/`), and not a Sass comment like (`//----- 1.0 Normalize -----`). This is important because this comment needs to be to exist in the final CSS file, but with a Sass style comment it will be hidden by the Sass compiler. Also note that this is used in the *stylesheet header*, and the table of contents.
+
+The following is an example of the `style.scss` file containing the table of content, and some imports to external sass files.
 
 ```css
 /*
