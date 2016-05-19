@@ -213,17 +213,17 @@ The following is an example of the `style.scss` file containing the table of con
 
 ```
 
-To automate generating the `rtl.css` file automatically, [`gulp-rtlcss`](https://www.npmjs.com/package/gulp-rtlcss) plugin could be used to auto convert LTR CSS to RTL, so you write Sass in one file then gulp will generate the `style.css` file then generate `rtl.css` file based on it.
+To automate generating the `rtl.css` file automatically, [`gulp-rtlcss`](https://www.npmjs.com/package/gulp-rtlcss) plugin could be used to auto convert LTR CSS to RTL, so you can write Sass in one file then Gulp will generate two CSS files, the first is `style.css` file, and the second is `rtl.css` file.
 
 The idea behind `gulp-rtlcss` is to convert all the CSS properties like floats, text align, text direction, and other properties from left to right.
 
-The second plugin is the [`gulp-rename`](https://www.npmjs.com/package/gulp-rename) which will rename the file to `rtl.css` automatically.
+The second plugin is [`gulp-rename`](https://www.npmjs.com/package/gulp-rename) which will rename the file to `rtl.css` automatically.
 
 ```
 npm install gulp-rtlcss gulp-rename --save-dev
 ```
 
-The next step is to included the newly installed plugins and modify the `sass` task to use `rtlcss` and in this step the plugin will convert all the CSS properties like floats and text direction from left to right.
+The next step is to included the newly installed plugins at the top of `gulpfile.js` file, and modify the `sass` task to use `rtlcss()` after the `style.css` is generated to do the conversion, in this step the plugin will convert all the CSS properties like floats and text direction from left to right, then rename the file to `rtl.css`, and then output the file to the theme root.
 
 ```js
 var rtlcss       = require('gulp-rtlcss');
@@ -241,8 +241,6 @@ gulp.task('sass', function() {
 });
 ```
 
-Note that I added the `rtlcss()` function just after `style.css` file generated then renamed the file to `rtl.css`, and the final step is to output it.
-
 Run `gulp sass`, and you will have `style.css` and `rtl.css` files generated.
 
 To read more about Sass structure, and how to use it with Gulp you can read:
@@ -251,22 +249,34 @@ To read more about Sass structure, and how to use it with Gulp you can read:
 
 [A Simple Gulp’y Workflow For Sass](http://www.sitepoint.com/simple-gulpy-workflow-sass/)
 
+### Watching Files
+
+Instead of running `gulp sass` every time when you change a Sass file, a new task is required to do this automatically for you.
+
+So the `watch` task will be used to watch any changes made to a file, so once that file is changed, do another action. For example when you save a Sass file, then `sass` task should run automatically.
+
+Inside `gulpfile.js` file add a new `watch` task to watch any changes in the `/sass` directory, then run the `sass` task. The next step is to update the `default` task with the watch task.
+
+```js
+gulp.task('watch', function() {
+  gulp.watch('./sass/**/*.scss', ['sass']);
+});
+
+gulp.task('default', ['sass', 'watch']);
+```
+
+Now you can run `gulp` in the command line to execute `sass` task first then the `watch` task will continue working.
+
 ### Error Handler
 
-Sometimes while you are writing code, you might write something wrong, say you mistypes undefined Sass variable, and in the middle of work while you are watching files, Gulp will break because the specific task can't compile that variable. This is annoying because you have to start Gulp again to continue working. 
+Sometimes while you are writing code, you might write something wrong, say you write undefined Sass variable, and in the middle of work while you are watching files, Gulp will break because the specific task can't compile that variable. This is annoying because you have to start Gulp again to continue working. 
 
 You can fix this by using [gulp-plumber](https://www.npmjs.com/package/gulp-plumber) plugin, which will prevent Gulp breaking caused by errors.
 
-Install `gulp-plumber`:
+To improve error handling, install [gulp-util](https://github.com/gulpjs/gulp-util) utility functions package to customize the error message, add beep sound once the error occurred, plus adding colors to the error message which is useful identifying the error.
 
 ```
-npm install gulp-plumber --save-dev
-```
-
-To improve error handling, install the [gulp-util](https://github.com/gulpjs/gulp-util) utility functions package to customize the error message, add beep sound once the error occurred, plus adding colors to the error message which is useful identifying the error.
-
-```
-npm install gulp-util --save-dev
+npm install gulp-plumber gulp-util --save-dev
 ```
 
 ```js
@@ -287,30 +297,16 @@ gulp.task('sass', function() {
 });
 ```
 
-What we have did above:
+What we have done above:
 
 - Add `onError` function to log the error message, and create a beep sound.
 - Update the `sass` task to use the `plumber` function, then pass the `onError` function to the `errorHandler` object property. 
 
 By doing this you can know exactly what's happening on errors, in which file, and also Gulp will not stop working.
 
-### Watching Files
+This is en example of undefined Sass variable `$color`.
 
-Instead of running `gulp sass` every time when you change a Sass file, a new task is required to do this automatically for you.
-
-So the watch task will be used to watch any changes made to a file, so once that file is changed, do some action. For example when you save a Sass file, `sass` task should run automatically.
-
-Inside `gulpfile.js` file add a new `watch` task to watch any changes in the `/sass` directory, then run the `sass` task. The next step is to update the `default` task with the watch task.
-
-```js
-gulp.task('watch', function() {
-  gulp.watch('./sass/**/*.scss', ['sass']);
-})
-
-gulp.task('default', ['sass', 'watch']);
-```
-
-Now you can run `gulp` in the command line to execute `sass` task first then the `watch` task will continue working.
+![Sass Error Handling](https://cloud.githubusercontent.com/assets/626005/15383185/d304f5d4-1d99-11e6-9382-c336574acfd7.png)
 
 ### Browser Refresh with BrowserSync
 
@@ -491,4 +487,5 @@ gulp.task('watch', function() {
 
 ## Conclusion
 
-As you’ve seen, working with automation tools becomes very important to improve and speed development process, so everything that is manually done should be automated to save time and to change the way we develop for the web.
+As you’ve seen, working with automation tools becomes very important to improve and speed the development process. We have gone through the Gukp, installing it, and working with CSS to compile Sass, working with RTl.  Everything that is manually done should be automated to save time and to change the way we develop for the web.
+
