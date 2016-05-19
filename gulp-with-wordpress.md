@@ -267,7 +267,7 @@ gulp.task('default', ['sass', 'watch']);
 
 Now you can run `gulp` in the command line to execute `sass` task first then the `watch` task will continue working.
 
-### Error Handler
+### Error Handling
 
 Sometimes while you are writing code, you might write something wrong, say you write undefined Sass variable, and in the middle of work while you are watching files, Gulp will break because the specific task can't compile that variable. This is annoying because you have to start Gulp again to continue working. 
 
@@ -308,73 +308,39 @@ This is en example of undefined Sass variable `$color`.
 
 ![Sass Error Handling](https://cloud.githubusercontent.com/assets/626005/15383185/d304f5d4-1d99-11e6-9382-c336574acfd7.png)
 
-### Browser Refresh with BrowserSync
-
-What if you are testing with more than one browser or mobile devices, you will have to hit the refresh button on every single screen. What if something is responsible for doing this for you. 
-
-First, you'll need to install Browsersync.
-
-```
-npm install browser-sync --save-dev
-```
-
-Next, require Browsersync inside `gulpfile.js` file:
-
-```js
-var browserSync = require('browser-sync').create();
-var reload      = browserSync.reload;
-```
-
-The next step is to add the Browsersync to the watch task as:
-
-```js
-gulp.task('watch', function() {
-  browserSync.init({
-    files: ['./**/*.php'],
-    proxy: 'http://localhost:8888/wordpress/',
-  });
-  gulp.watch('./sass/**/*.scss', ['sass', reload]);
-  gulp.watch('./js/*.js', ['js', reload]);
-  gulp.watch('./images/*', ['images', reload]);
-});
-```
-
-TODO: Explain the above code in more details, php files, ...
-
-We can now run `gulp` and it will open a new tab in the browser to the localhost, and this localhost could be used in any device connected to the same network, so in every change browserSync will reload all the browsers.
-
-We also have updated the `sass`, `js` and `images` watch tasks to reload the page if any changes happened to the files or we changed the content of the images folder.
-
-Notice that we will need to update the [proxy](https://www.browsersync.io/docs/options/#option-proxy) option to our local development URL. For example, if our local development URL is `localhost:8888/wordpress`, we would update the proxy value above with it.
-
 ### JavaScript
 
-For working with JavaScript, there are different tools required to speed up and improve JavaScript development workflow like:
+For working with JavaScript, there are different tools required to speed up and improve JavaScript development workflow, for example:
 
-- Check code errors with jshint.
 - Concatenate many JavaScript files into a single file.
-- Minify code to get a much smaller file size
+- Check code errors with jshint.
+- Minify code to get a much smaller file size.
 
-You can install theses plugins as following:
+You can install these plugins as following:
+
+To concatenate files
 
 ```
-// To validation JavaScript
-npm install jshint gulp-jshint --save-dev
-
-// To concatenate files
 npm install gulp-concat --save-dev
+```
 
-// To minify files
+To validate JavaScript
+
+```
+npm install gulp-jshint --save-dev
+```
+
+To minify code
+
+```
 npm install gulp-uglify --save-dev
 ```
-
-Next, in the we will require all the newly installed packages, then we can create a `js` task as:
 
 Next, inside `gulpfile.js` file require the newly installed plugins, add a new `js` task.
 
 ```js
-var jshint = require('gulp-jshint');
 var concat = require('gulp-concat');
+var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 
 gulp.task('js', function() {
@@ -387,13 +353,13 @@ gulp.task('js', function() {
 });
 ```
 
-This task takes any file that ends with `.js` extension inside the `./js` directory, check for code errors with jshint, then concatenate them to `app.js`, and as we need a minified output; it's time to rename the file to `app.min.js`, then minify the code, and the last step it to output the file to the `./js` directory.
+This task takes any file that ends with `.js` extension inside the `./js` directory, check for code errors with jshint, then concatenate them to `app.js`, and as we need a minified output; it's time to rename the file to `app.min.js`, then minify the code, and in the the last step, output the file to the `./js` directory.
 
-Now, run `gulp js` from the command line, a new `app.min.js` file will be generated which will be used in the theme.
+Now, run `gulp js` from the command line, a new `app.min.js` file will be generated which will be used later in the theme.
 
 By default, the `_underscore` theme includes `customizer.js`, `navigation.js`, and `skip-link-focus-fix.js` files under the `/js` directory.
 
-If you just need to include a specific files, you can add them inside `gulp.src` array as:
+If you only need to include specific files, you can add them inside `gulp.src` array as:
 
 ```js
 gulp.task('js', function() {
@@ -406,9 +372,9 @@ gulp.task('js', function() {
 });
 ```
 
-This will just do all the operations on those two files, if you need to add another new file you only need to append it to the array.
+This will just do all the operations on those two files, if you need to add another new file you can append it to the array.
 
-You can also update the `watch` task to watch changes to any JavaScipt file, then run the `js` task.
+You can also update the `watch` task to watch changes to any JavaScipt file, and also update the default task to run the `js` task automatically when running `gulp`, just as we did in the Sass task.
 
 ```js
 gulp.task('watch', function() {
@@ -422,12 +388,12 @@ gulp.task('default', ['sass', 'js', 'watch']);
 Inside `functions.php` theme file, enqueue the generated `app.min.js` file as:
 
 ```php
-wp_enqueue_script( 'app-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20120206', true );
+wp_enqueue_script( 'gulp-wordpress-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20151215', true );
 ```
 
 You can remove other enqueued JavaScript files as they already concatenated and minified into a single file. Including one file will speed up and improve website performance instead of loading too many files.
 
-The enqueue function inside `functions.php` will end up to look similar to:
+The enqueue scripts function inside `functions.php` file will end up to look similar to:
 
 ```php
 /**
@@ -436,10 +402,13 @@ The enqueue function inside `functions.php` will end up to look similar to:
 function gulp_wordpress_scripts() {
   wp_enqueue_style( 'gulp-wordpress-style', get_stylesheet_uri() );
 
-  wp_enqueue_script( 'gulp-wordpress-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20120206', true );
+  wp_enqueue_script( 'gulp-wordpress-javascript', get_template_directory_uri() . '/js/app.min.js', array(), '20151215', true );
 }
 add_action( 'wp_enqueue_scripts', 'gulp_wordpress_scripts' );
 ```
+
+## TODO
+- Review the JSHINT functionality
 
 ### Images
 
@@ -484,6 +453,45 @@ gulp.task('watch', function() {
 ```
 
 [Image Optimizing with Gulp](http://diezjietal.be/blog/2015/02/18/image-optimizers.html)
+
+### Browser Refresh with BrowserSync
+
+What if you are testing with more than one browser or mobile devices, you will have to hit the refresh button on every single screen. What if something is responsible for doing this for you. 
+
+First, you'll need to install Browsersync.
+
+```
+npm install browser-sync --save-dev
+```
+
+Next, require Browsersync inside `gulpfile.js` file:
+
+```js
+var browserSync = require('browser-sync').create();
+var reload      = browserSync.reload;
+```
+
+The next step is to add the Browsersync to the watch task as:
+
+```js
+gulp.task('watch', function() {
+  browserSync.init({
+    files: ['./**/*.php'],
+    proxy: 'http://localhost:8888/wordpress/',
+  });
+  gulp.watch('./sass/**/*.scss', ['sass', reload]);
+  gulp.watch('./js/*.js', ['js', reload]);
+  gulp.watch('./images/*', ['images', reload]);
+});
+```
+
+TODO: Explain the above code in more details, php files, ...
+
+We can now run `gulp` and it will open a new tab in the browser to the localhost, and this localhost could be used in any device connected to the same network, so in every change browserSync will reload all the browsers.
+
+We also have updated the `sass`, `js` and `images` watch tasks to reload the page if any changes happened to the files or we changed the content of the images folder.
+
+Notice that we will need to update the [proxy](https://www.browsersync.io/docs/options/#option-proxy) option to our local development URL. For example, if our local development URL is `localhost:8888/wordpress`, we would update the proxy value above with it.
 
 ## Conclusion
 
