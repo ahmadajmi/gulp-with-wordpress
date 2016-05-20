@@ -346,6 +346,7 @@ var uglify = require('gulp-uglify');
 gulp.task('js', function() {
   return gulp.src(['./js/*.js'])
     .pipe(jshint())
+    .pipe(jshint.reporter('default'))
     .pipe(concat('app.js'))
     .pipe(rename({suffix: '.min'}))
     .pipe(uglify())
@@ -354,6 +355,22 @@ gulp.task('js', function() {
 ```
 
 This task takes any file that ends with `.js` extension inside the `./js` directory, check for code errors with jshint, then concatenate them to `app.js`, and as we need a minified output; it's time to rename the file to `app.min.js`, then minify the code, and in the the last step, output the file to the `./js` directory.
+
+At this point, create a `.jshintrc` configuration file in the theme root, which is a simple JSON file that specifies which JSHint options to turn on or off, for example:
+
+```js
+{
+  "undef": true,
+  "unused": true,
+  "browser": true
+}
+```
+
+- `undef`: Warns when you use a variable that was not declared.
+- `unused`: Warns when define a variable and never use it.
+- `browser`: Defines globals exposed by modern browsers, like `navigator` and `document`
+
+JSHint comes with a set of [options](http://jshint.com/docs/options/) that you can use based on your preference.
 
 Now, run `gulp js` from the command line, a new `app.min.js` file will be generated which will be used later in the theme.
 
@@ -406,9 +423,6 @@ function gulp_wordpress_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'gulp_wordpress_scripts' );
 ```
-
-## TODO
-- Review the JSHINT functionality
 
 ### Images
 
