@@ -297,7 +297,7 @@ gulp.task('sass', function() {
 });
 ```
 
-What we have done above:
+What have been done above:
 
 - Add `onError` function to log the error message, and create a beep sound.
 - Update the `sass` task to use the `plumber` function, then pass the `onError` function to the `errorHandler` object property. 
@@ -465,24 +465,20 @@ gulp.task('default', ['sass', 'js', 'images', 'watch']);
 
 ### Browser Refresh with BrowserSync
 
-What if you are testing with more than one browser or mobile devices, you will have to hit the refresh button on every single screen. What if something is responsible for doing this for you. 
+What if you want to refresh the browser after any code changes whether the code is PHP, Sass, or JavaScript, and what if you are testing with more than one browser or mobile devices, you will have to hit the refresh button on every single screen. BrowserSync will help in doing this effectively.
 
-First, you'll need to install Browsersync.
+First, you'll need to install Browsersync as development dependencies.
 
 ```
 npm install browser-sync --save-dev
 ```
 
-Next, require Browsersync inside `gulpfile.js` file:
+Next, require Browsersync inside `gulpfile.js` file, and update the `watch` task to include Browsersync as:
 
 ```js
 var browserSync = require('browser-sync').create();
-var reload      = browserSync.reload;
-```
+var reload = browserSync.reload;
 
-The next step is to add the Browsersync to the watch task as:
-
-```js
 gulp.task('watch', function() {
   browserSync.init({
     files: ['./**/*.php'],
@@ -490,17 +486,21 @@ gulp.task('watch', function() {
   });
   gulp.watch('./sass/**/*.scss', ['sass', reload]);
   gulp.watch('./js/*.js', ['js', reload]);
-  gulp.watch('./images/*', ['images', reload]);
+  gulp.watch('images/src/*', ['images', reload]);
 });
 ```
 
-TODO: Explain the above code in more details, php files, ...
+Notice that you will need to update the [proxy](https://www.browsersync.io/docs/options/#option-proxy) option to the local development URL. For example, if your local URL is `localhost:8888/wordpress`, we would update the proxy value above with it. 
 
-We can now run `gulp` and it will open a new tab in the browser to the localhost, and this localhost could be used in any device connected to the same network, so in every change browserSync will reload all the browsers.
+As Browsersync can watch your files as you work, for example, I added the I set the task to watch any changes in PHP files. 
 
-We also have updated the `sass`, `js` and `images` watch tasks to reload the page if any changes happened to the files or we changed the content of the images folder.
+Also updated the `sass`, `js` and `images` watch tasks to reload the page if any changes happened to the files or we changed the content of the images folder.
 
-Notice that we will need to update the [proxy](https://www.browsersync.io/docs/options/#option-proxy) option to our local development URL. For example, if our local development URL is `localhost:8888/wordpress`, we would update the proxy value above with it.
+Now, you can run `gulp`, and a new tab in the browser will be opened automatically to a localhost server, and this localhost could be used in any device connected to the same network, so in every change browserSync will reload all the browsers.
+
+![browsersync](https://cloud.githubusercontent.com/assets/626005/15453792/41ee5ff6-202b-11e6-8170-a0895d652853.png)
+
+Browsersync comes with a set of options, you can check them at [Browsersync options](https://www.browsersync.io/docs/options/).
 
 ## Conclusion
 
