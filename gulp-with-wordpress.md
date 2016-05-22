@@ -172,7 +172,7 @@ var sass          = require('gulp-sass');
 var autoprefixer  = require('gulp-autoprefixer');
 
 gulp.task('sass', function() {
-  return gulp.src('./sass/*.scss')
+  return gulp.src('./sass/**/*.scss')
   .pipe(sass())
   .pipe(autoprefixer())
   .pipe(gulp.dest('./'))
@@ -313,7 +313,7 @@ This is en example of undefined Sass variable `$color`.
 For working with JavaScript, there are different tools required to speed up and improve JavaScript development workflow, for example:
 
 - Concatenate many JavaScript files into a single file.
-- Check code errors with jshint.
+- Check code errors with JSHint.
 - Minify code to get a much smaller file size.
 
 You can install these plugins as following:
@@ -426,47 +426,42 @@ add_action( 'wp_enqueue_scripts', 'gulp_wordpress_scripts' );
 
 ### Images
 
-To minify images you need to install the [gulp-imagemin](https://www.npmjs.com/package/gulp-imagemin) to minify PNG, JPEG, GIF, and SVG images.
+Let's now try to optimize images with Gulp, by doing this we will ensure that all the used images in the theme are automatically optimized for speed. To make this automation easier, you can setup a Gulp task to watch the images directory, and once you drag an image there, gulp will optimize it and move it to another folder for optimized and ready to use images.
+
+Create two folders:
+
+1. `/images/src`: Source folder contains the original images.
+2. `/images/dest`: Destination folder contains the optimized images.
+
+Install [gulp-imagemin](https://www.npmjs.com/package/gulp-imagemin) to minify PNG, JPEG, GIF, and SVG images.
 
 ```
 npm install gulp-imagemin --save-dev
 ```
 
-You can create two folders:
-
-1. `/images`: Source folder contains the original images.
-2. `/dest/images`: Destination folder contains the optimized images.
-
-And the task that we will write will see images in the first folder, then optimize them and move them to the optimized folder.
+Create a new task (`images`), that we will watch images located in the source folder (`/images/src`), optimize them, and move them to the optimized folder (`/images/dest`).
 
 ```js
 var imagemin = require('gulp-imagemin');
-var pngquant = require('imagemin-pngquant');
-
-// Images
 
 gulp.task('images', function() {
-  return gulp.src('./images/*')
+  return gulp.src('./images/src/*')
     .pipe(plumber({ errorHandler: onError }))
-    .pipe(imagemin({
-      optimizationLevel: 7,
-      progressive: true,
-      use: [pngquant()]
-    }))
-    .pipe(gulp.dest('./dest/images'));
+    .pipe(imagemin({ optimizationLevel: 7, progressive: true }))
+    .pipe(gulp.dest('./images/dist'));
 });
 ```
 
-The next is to watch the `/images`, and every time we drag a new image there it will compress the new image automatically for us.
+You can also watch the `/images/src` folder, so every time you drag a new image there, the `images` task will run. Also update the `default` task to run the `images` task.
 
 ```js
 gulp.task('watch', function() {
   //
-  gulp.watch('./images/*', ['images']);
+  gulp.watch('images/src/*', ['images']);
 });
-```
 
-[Image Optimizing with Gulp](http://diezjietal.be/blog/2015/02/18/image-optimizers.html)
+gulp.task('default', ['sass', 'js', 'images', 'watch']);
+```
 
 ### Browser Refresh with BrowserSync
 
