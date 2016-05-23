@@ -465,7 +465,7 @@ gulp.task('default', ['sass', 'js', 'images', 'watch']);
 
 ### Browser Refresh with BrowserSync
 
-What if you want to refresh the browser after any code changes whether the code is PHP, Sass, or JavaScript, and what if you are testing with more than one browser or mobile devices, you will have to hit the refresh button on every single screen. BrowserSync will help in doing this effectively.
+What if you want to refresh the browser after any code changes whether the code is PHP, Sass, or JavaScript, and what if you are testing with more than one browser or mobile devices, you will have to hit the refresh button on every single screen. [BrowserSync](https://www.browsersync.io/) will help in doing this effectively.
 
 First, you'll need to install Browsersync as development dependencies.
 
@@ -490,19 +490,31 @@ gulp.task('watch', function() {
 });
 ```
 
-Notice that you will need to update the [proxy](https://www.browsersync.io/docs/options/#option-proxy) option to the local development URL. For example, if your local URL is `localhost:8888/wordpress`, we would update the proxy value above with it. 
+Notice that you will need to update the [proxy](https://www.browsersync.io/docs/options/#option-proxy) option to the local development URL. For example, if your local URL is `localhost:8888/wordpress`, update the proxy value above with it. 
 
-As Browsersync can watch your files as you work, for example, I added the I set the task to watch any changes in PHP files. 
+As Browsersync can watch your files as you work, for example, I configured the task to watch any changes to PHP files. 
 
-Also updated the `sass`, `js` and `images` watch tasks to reload the page if any changes happened to the files or we changed the content of the images folder.
+Also updated the `sass`, `js` and `images` watch tasks to reload the page if any changes happened to the files or you changed the content of the images folder.
 
-Now, you can run `gulp`, and a new tab in the browser will be opened automatically to a localhost server, and this localhost could be used in any device connected to the same network, so in every change browserSync will reload all the browsers.
+Now, you can run `gulp`, and a new tab will be opened automatically in the browser to the localhost URL, and your console will looks something like this:
+
+```
+[BS] Access URLs:
+ --------------------------------------------
+       Local: http://localhost:3000/wordpress/
+    External: http://192.168.1.2:3000/wordpress/
+ --------------------------------------------
+          UI: http://localhost:3001
+ UI External: http://192.168.1.2:3001
+ --------------------------------------------
+```
 
 ![browsersync](https://cloud.githubusercontent.com/assets/626005/15453792/41ee5ff6-202b-11e6-8170-a0895d652853.png)
 
-Browsersync comes with a set of options, you can check them at [Browsersync options](https://www.browsersync.io/docs/options/).
+You can use the *External* URL in any device connected to the same network, so in every change browserSync will reload all the browsers.
+
+The *UI External* URL is used for Browsersync control panel, which allows you to change sync options, manage devices.
 
 ## Conclusion
 
-As you’ve seen, working with automation tools becomes very important to improve and speed the development process. We have gone through the Gukp, installing it, and working with CSS to compile Sass, working with RTl.  Everything that is manually done should be automated to save time and to change the way we develop for the web.
-
+As you’ve seen, working with automation tools becomes very important to improve and speed the development process. We have gone through Gulp, working Sass, JavaScript, images, and Browsersync. There are lots of [Gulp plugins](http://gulpjs.com/plugins/) out there you can try and use based on your requirements, so that if anything is manually done should be automated to save time, and to make the development process more efficiency.
