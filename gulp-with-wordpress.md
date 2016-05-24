@@ -1,5 +1,7 @@
 # WordPress Theme Development Automation with Gulp
 
+As web sites becomes more complex in the way we write code, and the steps we do every time doing repetitive tasks to optimize the web site assets for example, there should be a better way for an efficient development process.
+
 In this tutorial, I’ll introduce [Gulp](http://gulpjs.com/), and how to integrate it with [WordPress](https://wordpress.org/) to automate and enhance theme development process by putting together an automated workflow.
 
 ## Why You Need to Automate Your Development Workflow
@@ -517,4 +519,6 @@ The *UI External* URL is used for Browsersync control panel, which allows you to
 
 ## Conclusion
 
-As you’ve seen, working with automation tools becomes very important to improve and speed the development process. We have gone through Gulp, working Sass, JavaScript, images, and Browsersync. There are lots of [Gulp plugins](http://gulpjs.com/plugins/) out there you can try and use based on your requirements, so that if anything is manually done should be automated to save time, and to make the development process more efficiency.
+As you’ve seen, working with automation tools becomes very important to improve and speed the development process. There are lots of [Gulp plugins](http://gulpjs.com/plugins/) out there you can try and use based on your requirements, so that if anything is manually done should be automated to save time, and to make the development process more efficiency.
+
+I’ve created a GitHub repo for this article WordPress theme and [you can check out the code here](https://github.com/ahmadajmi/underscore-wordpress-with-gulp). Let me know if you use any Gulp plugins in your development process that makes your life easier.
