@@ -1,6 +1,6 @@
 # WordPress Theme Development Automation with Gulp
 
-As web sites becomes more complex in the way we write code, and the steps we do every time doing repetitive tasks to optimize the web site assets for example, there should be a better way for an efficient development process.
+As websites become more complicated in the way we write code, and the steps we do every time doing repetitive tasks to optimize the assets for example. There should be a better way for an efficient development process.
 
 In this tutorial, I’ll introduce [Gulp](http://gulpjs.com/), and how to integrate it with [WordPress](https://wordpress.org/) to automate and enhance theme development process by putting together an automated workflow.
 
@@ -12,18 +12,18 @@ In this tutorial, I’ll introduce [Gulp](http://gulpjs.com/), and how to integr
 
 ## Assumptions of This Article
 
-- WordPress installed in your development machine.
+- WordPress installed on your development machine.
 - [Nodejs](https://nodejs.org/en/) and [npm](https://www.npmjs.com/) are installed.
 - Command line basic knowledge.
 
 ## Introduction to Gulp
 
-Gulp is a JavaScript task runner that will help automate a time consuming tasks like CSS compressing, Sass compile, image optimization, or browser reload.
+Gulp is a JavaScript task runner that will help automate time-consuming tasks like CSS compressing, Sass compile, image optimization, or browser reload.
 
-Gulp giving you the tools to do some actions (tasks) for a specific need after something is happened, for example consider the following scenarios:
+Gulp is giving you the tools to do some actions (tasks) for a particular need after something happens. For example, consider the following scenarios:
 
 - Every time you save a Sass file, Gulp will compile Sass and output a minified CSS file.
-- When you add a new Image to the images folder, Gulp will optimize this image and move it to a new dedicated folder.
+- When you add a new image to a folder, Gulp will optimize this image and move it to a new dedicated folder.
 - When you save a PHP or a Sass file, Gulp will automatically reload the browser.
 
 ### Gulp Setup
@@ -36,7 +36,7 @@ Assuming Node.js is installed, open the command line tool, then install Gulp usi
 npm install --global gulp
 ```
 
-Now, run `gulp -v` (Gulp version) to test that Gulp is installed properly, and you should get output similar to:
+Now, run `gulp -v` (Gulp version) to test that Gulp is installed correctly, and you should get output similar to:
 
 ```
 ➜  ~ gulp -v
@@ -45,9 +45,9 @@ Now, run `gulp -v` (Gulp version) to test that Gulp is installed properly, and y
 
 ## Theme Setup
 
-In this tutorial I will use the [underscore](http://underscores.me/) as the base theme. To download it, navigate to [underscores.me](http://underscores.me/), generate a new theme and give it a name like `gulp-wordpress`, download it to the WordPress themes directory, then activate it from the dashboard.
+In this tutorial, I will use the [underscore](http://underscores.me/) as the base theme. To download it, navigate to [underscores.me](http://underscores.me/), generate a new theme and give it a name like `gulp-wordpress`, download it to the WordPress themes directory, then activate it from the dashboard.
 
-From the command line, navigate to the `gulp-wordpress` theme directory where you have added the theme, for example in my case:
+From the command line, navigate to the `gulp-wordpress` directory where you have added the theme, for example in my case:
 
 ```
 cd ~/www/wordpress/wp-content/themes/gulp-wordpress
@@ -72,7 +72,7 @@ Next, install Gulp as a development dependency:
 npm install gulp --save-dev
 ```
 
-A `node_modules` directory is now created inside the theme, contains Gulp package source files, and `package.json` file has been updated to include Gulp as a development dependency.
+A `node_modules` directory is now created, contains Gulp package source files, and `package.json` file has been updated to include Gulp as a development dependency.
 
 ```js
 {
@@ -86,7 +86,7 @@ A `node_modules` directory is now created inside the theme, contains Gulp packag
 }
 ```
 
-Some Gulp tasks like [gulp-autoprefixer](https://www.npmjs.com/package/gulp-autoprefixer) require ES6-style Promises support, so you can install the [es6-promise](https://github.com/jakearchibald/es6-promise) polyfill, and then require it at the top of the `gulpfile.js` as we will do next.
+Some Gulp tasks like [gulp-autoprefixer](https://www.npmjs.com/package/gulp-autoprefixer) require ES6-style Promises support so that you can install the [es6-promise](https://github.com/jakearchibald/es6-promise) polyfill, and then require it at the top of the `gulpfile.js` as we will do next.
 
 ```
 npm install es6-promise --save-dev
@@ -136,7 +136,7 @@ The next step is to create a Sass directory with a basic structure.
 
 ```
 ├── sass
-│   └── style.scss
+│   └── style.scss
 ```
 
 The `style.scss` is the main starting point file, you are free to create your Sass architecture and import other components, modules, functions inside it based on your preference. 
@@ -185,11 +185,11 @@ gulp.task('default', ['sass']);
 
 Now, run `gulp sass` task directly from the command line, this will compile `style.scss` file, and build a new `style.css` file in the theme root. 
 
-Another way to run the `sass` task, is to pass the task name as a second parameter to the `default` task as I did above, so by running `gulp`, the `sass` task will be executed.
+Another way to run the `sass`, is to pass the task name as a second parameter to the `default` task as I did above, so by running `gulp`, the `sass` task will be executed.
 
 A good WordPress practice is to include the CSS table of content to the final CSS file at the top just after the *stylesheet header*, then add a CSS comment before any code or import related to the section. 
 
-Note that the comment is a normal CSS style comment like (`/*----- 1.0 Normalize -----*/`), and not a Sass comment like (`//----- 1.0 Normalize -----`). This is important because this comment needs to be to exist in the final CSS file, but with a Sass style comment it will be hidden by the Sass compiler. Also note that this is used in the *stylesheet header*, and the table of contents.
+Note that the comment is a standard CSS style comment like (`/*----- 1.0 Normalize -----*/`), and not a Sass comment like (`//----- 1.0 Normalize -----`). This is important because this comment needs to be to exist in the final CSS file, but with a Sass style comment it will be hidden by the Sass compiler. Also, note that this is used in the *stylesheet header*, and the table of contents.
 
 The following is an example of the `style.scss` file containing the table of content, and some imports to external sass files.
 
@@ -215,9 +215,9 @@ The following is an example of the `style.scss` file containing the table of con
 
 ```
 
-To automate generating the `rtl.css` file automatically, [`gulp-rtlcss`](https://www.npmjs.com/package/gulp-rtlcss) plugin could be used to auto convert LTR CSS to RTL, so you can write Sass in one file then Gulp will generate two CSS files, the first is `style.css` file, and the second is `rtl.css` file.
+To automate generating the `rtl.css` file automatically, [`gulp-rtlcss`](https://www.npmjs.com/package/gulp-rtlcss) plugin could be used to auto convert LTR (left to right) CSS to RTL (right to left), so you can write Sass in one file then Gulp will generate two CSS files, the first is `style.css` file, and the second is `rtl.css` file.
 
-The idea behind `gulp-rtlcss` is to convert all the CSS properties like floats, text align, text direction, and other properties from left to right.
+The idea behind `gulp-rtlcss` is to convert all the CSS properties like floats, text-align, text direction, and other properties from left to right.
 
 The second plugin is [`gulp-rename`](https://www.npmjs.com/package/gulp-rename) which will rename the file to `rtl.css` automatically.
 
@@ -225,7 +225,9 @@ The second plugin is [`gulp-rename`](https://www.npmjs.com/package/gulp-rename) 
 npm install gulp-rtlcss gulp-rename --save-dev
 ```
 
-The next step is to included the newly installed plugins at the top of `gulpfile.js` file, and modify the `sass` task to use `rtlcss()` after the `style.css` is generated to do the conversion, in this step the plugin will convert all the CSS properties like floats and text direction from left to right, then rename the file to `rtl.css`, and then output the file to the theme root.
+The next step is to include the newly installed plugins at the top of `gulpfile.js` file, and modify the `sass` task to use `rtlcss()` after the `style.css` is generated to do the conversion. 
+
+In this step, the plugin will convert all the CSS properties like floats and text direction from left to right, then rename the file to `rtl.css`, and then output the file to the theme root.
 
 ```js
 var rtlcss       = require('gulp-rtlcss');
@@ -253,9 +255,9 @@ To read more about Sass structure, and how to use it with Gulp you can read:
 
 ### Watching Files
 
-Instead of running `gulp sass` every time when you change a Sass file, a new task is required to do this automatically for you.
+Instead of running `gulp sass` whenever you change a Sass file, a new task is required to do this automatically for you.
 
-So the `watch` task will be used to watch any changes made to a file, so once that file is changed, do another action. For example when you save a Sass file, then `sass` task should run automatically.
+The `watch` task will be used to view any changes made to a file, so once that file changed, do another action. For example, when you save a Sass file, then `sass` task should run automatically.
 
 Inside `gulpfile.js` file add a new `watch` task to watch any changes in the `/sass` directory, then run the `sass` task. The next step is to update the `default` task with the watch task.
 
@@ -271,7 +273,7 @@ Now you can run `gulp` in the command line to execute `sass` task first then the
 
 ### Error Handling
 
-Sometimes while you are writing code, you might write something wrong, say you write undefined Sass variable, and in the middle of work while you are watching files, Gulp will break because the specific task can't compile that variable. This is annoying because you have to start Gulp again to continue working. 
+Sometimes while you are writing code, and write undefined Sass variable, and in the middle of work while you are watching files, Gulp will break because the particular task can't compile that variable, this is annoying because you have to start Gulp again to continue working. 
 
 You can fix this by using [gulp-plumber](https://www.npmjs.com/package/gulp-plumber) plugin, which will prevent Gulp breaking caused by errors.
 
@@ -306,7 +308,7 @@ What have been done above:
 
 By doing this you can know exactly what's happening on errors, in which file, and also Gulp will not stop working.
 
-This is en example of undefined Sass variable `$color`.
+An example of undefined Sass variable `$color`.
 
 ![Sass Error Handling](https://cloud.githubusercontent.com/assets/626005/15383185/d304f5d4-1d99-11e6-9382-c336574acfd7.png)
 
@@ -356,7 +358,7 @@ gulp.task('js', function() {
 });
 ```
 
-This task takes any file that ends with `.js` extension inside the `./js` directory, check for code errors with jshint, then concatenate them to `app.js`, and as we need a minified output; it's time to rename the file to `app.min.js`, then minify the code, and in the the last step, output the file to the `./js` directory.
+This task takes any file that ends with `.js` extension inside the `./js` directory, check for code errors with jshint, then concatenate them to `app.js`, and as we need a minified output; it's time to rename the file to `app.min.js`, then minify the code, and in the last step, output the file to the `./js` directory.
 
 At this point, create a `.jshintrc` configuration file in the theme root, which is a simple JSON file that specifies which JSHint options to turn on or off, for example:
 
@@ -369,8 +371,8 @@ At this point, create a `.jshintrc` configuration file in the theme root, which 
 ```
 
 - `undef`: Warns when you use a variable that was not declared.
-- `unused`: Warns when define a variable and never use it.
-- `browser`: Defines globals exposed by modern browsers, like `navigator` and `document`
+- `unused`: Warns when defining a variable and never use it.
+- `browser`: Defines globals exposed by modern browsers, like `navigator` and `document`.
 
 JSHint comes with a set of [options](http://jshint.com/docs/options/) that you can use based on your preference.
 
@@ -391,9 +393,9 @@ gulp.task('js', function() {
 });
 ```
 
-This will just do all the operations on those two files, if you need to add another new file you can append it to the array.
+The code above will do all the operations on those two files. If you need to add another new file you can append it to the array.
 
-You can also update the `watch` task to watch changes to any JavaScipt file, and also update the default task to run the `js` task automatically when running `gulp`, just as we did in the Sass task.
+You can also update the `watch` task to watch changes to any JavaScipt file, and also update the `default` task to run the `js` actions automatically when running `gulp`, just as we did in the with Sass.
 
 ```js
 gulp.task('watch', function() {
@@ -428,7 +430,7 @@ add_action( 'wp_enqueue_scripts', 'gulp_wordpress_scripts' );
 
 ### Images
 
-Let's now try to optimize images with Gulp, by doing this we will ensure that all the used images in the theme are automatically optimized for speed. To make this automation easier, you can setup a Gulp task to watch the images directory, and once you drag an image there, gulp will optimize it and move it to another folder for optimized and ready to use images.
+Let's now try to optimize images with Gulp, by doing this we will ensure that all the used pictures in the theme are automatically optimized for speed. To make this automation easier, you can set up a Gulp task to watch the images directory, and once you drag an image there, gulp will optimize it and move it to another folder for optimized and ready to use images.
 
 Create two folders:
 
@@ -454,7 +456,7 @@ gulp.task('images', function() {
 });
 ```
 
-You can also watch the `/images/src` folder, so every time you drag a new image there, the `images` task will run. Also update the `default` task to run the `images` task.
+You can also watch the `/images/src` folder, so every time you drag a new image there, the `images` task will run. Also, update the `default` task to run the `images` action.
 
 ```js
 gulp.task('watch', function() {
@@ -496,7 +498,7 @@ Notice that you will need to update the [proxy](https://www.browsersync.io/docs/
 
 As Browsersync can watch your files as you work, for example, I configured the task to watch any changes to PHP files. 
 
-Also updated the `sass`, `js` and `images` watch tasks to reload the page if any changes happened to the files or you changed the content of the images folder.
+Also updated the `sass`, `js`, and `images` watch tasks to reload the page if any changes happened to the files, or you changed the content of the images folder.
 
 Now, you can run `gulp`, and a new tab will be opened automatically in the browser to the localhost URL, and your console will looks something like this:
 
@@ -511,14 +513,12 @@ Now, you can run `gulp`, and a new tab will be opened automatically in the brows
  --------------------------------------------
 ```
 
-![browsersync](https://cloud.githubusercontent.com/assets/626005/15453792/41ee5ff6-202b-11e6-8170-a0895d652853.png)
-
 You can use the *External* URL in any device connected to the same network, so in every change browserSync will reload all the browsers.
 
-The *UI External* URL is used for Browsersync control panel, which allows you to change sync options, manage devices.
+The *UI External* URL used for Browsersync control panel, which allows you to change sync options, manage devices.
 
 ## Conclusion
 
-As you’ve seen, working with automation tools becomes very important to improve and speed the development process. There are lots of [Gulp plugins](http://gulpjs.com/plugins/) out there you can try and use based on your requirements, so that if anything is manually done should be automated to save time, and to make the development process more efficiency.
+As you’ve seen, working with automation tools becomes very necessary to improve and speed the development process. There are lots of [Gulp plugins](http://gulpjs.com/plugins/) out there you can try and use based on your requirements, so that if anything is manually done should be automated to save time, and to make the development process more efficiency.
 
 I’ve created a GitHub repo for this article WordPress theme and [you can check out the code here](https://github.com/ahmadajmi/underscore-wordpress-with-gulp). Let me know if you use any Gulp plugins in your development process that makes your life easier.
